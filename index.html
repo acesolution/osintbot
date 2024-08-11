@@ -416,7 +416,7 @@
 
     const data = chart.getChartState().data;
     undoActions.reverse().forEach((action) => {
-      const node = data.find((x) => x.id === Number(action.id));
+      const node = data.find((x) => String(x.id) === String(action.id));
       node.parentId = action.parentId;
     });
 
@@ -427,7 +427,7 @@
   function undo() {
     const action = undoActions.pop();
     if (action) {
-      const node = chart.getChartState().data.find((x) => x.id === Number(action.id));
+      const node = chart.getChartState().data.find((x) => String(x.id) === String(action.id));
       const currentParentId = node.parentId;
       const previousParentId = action.parentId;
       action.parentId = currentParentId;
@@ -442,7 +442,7 @@
   function redo() {
     const action = redoActions.pop();
     if (action) {
-      const node = chart.getChartState().data.find((x) => x.id === Number(action.id));
+      const node = chart.getChartState().data.find((x) => String(x.id) === String(action.id));
       const currentParentId = node.parentId;
       const previousParentId = action.parentId;
       action.parentId = currentParentId;
