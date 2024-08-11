@@ -54,6 +54,35 @@
     padding-left: 0;
     padding-right: 0;
   }
+  /* Customize the navbar height */
+.custom-navbar {
+    height: 50px;
+    line-height: 50px;
+}
+
+/* Center align the icons in the navbar */
+.navbar .mx-auto {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Style the profile icon */
+.navbar .ml-auto .nav-link {
+    font-size: 1.5rem;
+}
+
+/* Adjust icon sizes */
+.navbar .nav-link i {
+    font-size: 1.25rem;
+}
+
+/* Remove extra padding from the navbar brand */
+.navbar .navbar-brand {
+    margin-right: auto;
+    padding-left: 0;
+}
+
 </style>
 
 <script>
@@ -492,6 +521,19 @@
   This is the code which is used to show of feature , other parts of the code are part of the boilerplate
 
 -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark custom-navbar">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Osint Bot</a>
+        <div class="navbar-nav mx-auto">
+            <a href="#" class="nav-link"><i class="fas fa-home"></i></a>
+            <a href="#" class="nav-link"><i class="fas fa-info-circle"></i></a>
+            <a href="#" class="nav-link"><i class="fas fa-envelope"></i></a>
+        </div>
+        <div class="navbar-nav ml-auto">
+            <a href="#" class="nav-link"><i class="fas fa-user-circle"></i></a>
+        </div>
+    </div>
+</nav>
 
 <div class="container-fluid" style="display:flex;">
 
