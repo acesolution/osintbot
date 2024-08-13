@@ -1,4 +1,3 @@
-
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.js"></script>
@@ -810,6 +809,7 @@
                 <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-menu"></use>
             </svg>
             </button>
+            
             <ul class="header-nav ms-auto ms-md-0">
                   <li class="nav-item">
                     <div class="chart-holder">
@@ -829,11 +829,7 @@
                       <button class="btn btn-link nav-link" id="cancelDrag" onclick="cancelDrag()" title="Cancel">
                         <img src="https://cdn-icons-png.flaticon.com/512/17330/17330259.png" alt="Icon" style="width: 21px; height: 20px;">
                       </button>
-                    </div>
-                    <! -- <button class="btn btn-link nav-link" type="button" aria-expanded="false" data-coreui-toggle="dropdown">
-                      <img src="https://cdn-icons-png.flaticon.com/512/10348/10348649.png" alt="Icon" style="width: 24px; height: 24px;">
-                    </button> -->
-                  
+                    </div>                  
                 </li>
                 <li class="nav-item py-1">
                     <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
@@ -947,16 +943,6 @@
             </svg>
             </button>
         </div>
-        <! -- <div class="container-fluid px-4">
-            <nav aria-label="breadcrumb">
-            <ol class="breadcrumb my-0">
-                <li class="breadcrumb-item"><a href="#" data-coreui-i18n="home">Home</a>
-                </li>
-                <li class="breadcrumb-item active"><span data-coreui-i18n="dashboard">Dashboard</span>
-                </li>
-            </ol>
-            </nav>
-        </div> -->
     </header>
 
     <div class="action-buttons">
@@ -1102,15 +1088,7 @@
         <br />
     </div>
 
-    <! -- <div class="chart-holder">
-        <button id="enableDragButton" onclick="enableDrag()" style="position:absolute;">Organize</button>
-        <div id="dragActions" class="hide">
-        <button id="finishDrag" onclick="disableDrag()">Done</button>
-        <button id="undoButton" disabled onclick="undo()">Undo</button>
-        <button id="redoButton" disabled onclick="redo()">Redo</button>
-        <button id="cancelDrag" onclick="cancelDrag()">Cancel</button>
-    </div> -->
-
+  
     <!--
     End of adding node functionality
     -->
@@ -1121,93 +1099,7 @@
 
 
 
-<! -- <div class="container-fluid" style="display:flex;">
 
-    <div class="filters-section">
-        <h4>Methods</h4>
-        <form>
-            <div class="form-group">
-                <input type="text" class="form-control" id="search" placeholder="Search">
-            </div>
-        </form>
-        <div id="accordion">
-            <div class="accordion-item">
-                <div class="title_tab">
-                    <i class="fa fa-chevron-right dropdown-icon"></i> <!-- Arrow icon here -->
-                    <span class="title">Scripts</span>
-                </div>
-                <div class="inner_content">
-                    <div class="list-group elements-list" id="scripts-list">
-                        <a href="#" class="list-group-item list-group-item-action"  >
-                            <i class="icon fa fa-envelope"></i> <!-- Add icon here -->
-                            Email
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <i class="icon fa fa-phone"></i> <!-- Add icon here -->
-                            Phone Number
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <i class="icon fa fa-file-alt"></i> <!-- Add icon here -->
-                            Text
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <div class="title_tab">
-                    <i class="fa fa-chevron-right dropdown-icon"></i> <!-- Arrow icon here -->
-                    <span class="title">Processors</span>
-                </div>
-                <div class="inner_content">
-                    <div class="list-group elements-list" id="processors-list">
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <i class="icon fa fa-calculator"></i> <!-- Add icon here -->
-                            Mathematics
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <div class="title_tab">
-                    <i class="fa fa-chevron-right dropdown-icon"></i> <!-- Arrow icon here -->
-                    <span class="title">Difficulty Level</span>
-                </div>
-                <div class="inner_content">
-                    <div class="list-group elements-list" id="difficulty-list">
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <i class="icon fa fa-thumbs-up"></i> <!-- Add icon here -->
-                            Easy
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <i class="icon fa fa-adjust"></i> <!-- Add icon here -->
-                            Medium
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <i class="icon fa fa-exclamation-triangle"></i> <!-- Add icon here -->
-                            Hard
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="chart-holder">
-        <button id="enableDragButton" onclick="enableDrag()">Organize</button>
-        <div id="dragActions" class="hide">
-        <button id="finishDrag" onclick="disableDrag()">Done</button>
-        <button id="undoButton" disabled onclick="undo()">Undo</button>
-        <button id="redoButton" disabled onclick="redo()">Redo</button>
-        <button id="cancelDrag" onclick="cancelDrag()">Cancel</button>
-        </div>
-
-        <!--
-        End of adding node functionality
-        -->
-        <div class="chart-container"></div>
-    </div>
-
-</div> -->
 
 
 
