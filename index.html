@@ -1,3 +1,4 @@
+
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.js"></script>
@@ -83,79 +84,105 @@
         padding-left: 0;
     }
     .btn {
-        margin: 3px;
-        color: inherit;
-        text-transform: uppercase;
-        word-wrap: break-word;
-        white-space: normal;
-        cursor: pointer;
-        border: 0;
-        border-radius: 0.125rem;
-        -webkit-box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%),
-          0 2px 10px 0 rgb(0 0 0 / 12%);
-        box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
-        -webkit-transition: color 0.15s ease-in-out,
-          background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
-          -webkit-box-shadow 0.15s ease-in-out;
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-          border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-          border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
-          -webkit-box-shadow 0.15s ease-in-out;
-        padding: 0.84rem 2.14rem;
-        font-size: 0.81rem;
-        display: inline-block;
-        font-weight: 400;
-        color: #212529;
-        text-align: center;
-        vertical-align: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        border: 1px solid transparent;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        line-height: 1.5;
-        border-radius: 0.25rem;
-      }
-
-      .btn-action-button {
-        text-transform: lowercase;
-        font-size: 12px !important;
-        border-radius: 7px !important;
-        color: black !important;
-        padding: 4px 5px !important;
-        background-color: white !important;
-        z-index: 1500;
-      }
-
-      .action-buttons {
-        display:none;
-        position: absolute;
-        top: 70px;
-        right: 30px;
-        transition: max-height 0.3s ease-out;
-      }
-      .action-buttons.open {
-        display: block;
-        transition: max-height 0.5s ease-in;
-      }
-
-      .svg-chart-container:before {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        background: radial-gradient(circle at center, #04192b 0, #000b0e 100%);
-      }
-      .svg-chart-container{
-        height:100%;
+      margin: 3px;
+      color: inherit;
+      text-transform: uppercase;
+      word-wrap: break-word;
+      white-space: normal;
+      cursor: pointer;
+      border: 0;
+      border-radius: 0.125rem;
+      -webkit-box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%),
+        0 2px 10px 0 rgb(0 0 0 / 12%);
+      box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+      -webkit-transition: color 0.15s ease-in-out,
+        background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+        -webkit-box-shadow 0.15s ease-in-out;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+        border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out,
+        -webkit-box-shadow 0.15s ease-in-out;
+      padding: 0.84rem 2.14rem;
+      font-size: 0.81rem;
+      display: inline-block;
+      font-weight: 400;
+      color: #212529;
+      text-align: center;
+      vertical-align: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      border: 1px solid transparent;
+      padding: 0.375rem 0.75rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      border-radius: 0.25rem;
     }
+
+    .btn-action-button {
+      text-transform: lowercase;
+      font-size: 12px !important;
+      border-radius: 7px !important;
+      color: black !important;
+      padding: 4px 5px !important;
+      background-color: white !important;
+      z-index: 1500;
+    }
+
+    .action-buttons {
+      display:none;
+      position: absolute;
+      top: 70px;
+      right: 30px;
+      transition: max-height 0.3s ease-out;
+    }
+    .action-buttons.open {
+      display: block;
+      transition: max-height 0.5s ease-in;
+    }
+
+    .svg-chart-container:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      background: radial-gradient(circle at center, #04192b 0, #000b0e 100%);
+    }
+    .svg-chart-container{
+      height:100%;
+    }
+    .zoom-buttons {
+      position: absolute;
+      padding:10px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .zoom-buttons button {
+        width: 30px;
+        height: 30px;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 2px;
+        font-size: 18px;
+        line-height: 1;
+        text-align: center;
+        cursor: pointer;
+        padding: 0;
+    }
+    
+    .zoom-buttons button:hover {
+        background-color: #e0e0e0;
+    }
+  
 
 </style>
 
@@ -259,7 +286,7 @@
   });
 
   function addDragEventListenersToFilterItems() {
-    const filterLists = document.querySelectorAll('.elements-list a');
+    const filterLists = document.querySelectorAll('.nav-group-items a');
     filterLists.forEach((item) => {
       item.setAttribute('draggable', true); // Make the list items draggable
   
@@ -298,11 +325,23 @@
         "Hard": "https://cdn-icons-png.freepik.com/512/9750/9750980.png"
     };
 
+    let lastId = 0;
+    const data = chart.getChartState().data;
+    console.log(data);
+    // Find the highest existing numeric ID
+    data.forEach(node => {
+        const nodeId = parseInt(node.id, 10); // Parse the ID as an integer
+        if (!isNaN(nodeId) && nodeId > lastId) {
+            lastId = nodeId;
+        }
+    });
+
+    // Generate a new ID by incrementing the last ID
+    const newId = (lastId + 1);
     // Get the appropriate icon class based on the node name
     const iconClass = iconMap[nodeName] || "fa fa-question"; // Default to a question mark icon if no match is found
-    console.log(iconClass);
     const newNode = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: newId,
       name: nodeName,
       position: "Newly Added",  // Customize this
       parentId: '100',  // Replace with actual parent ID or logic
@@ -310,11 +349,15 @@
     };
   
     // Update chart data
-    const data = chart.getChartState().data;
     data.push(newNode);
   
     // Re-render the chart
     chart.data(data).render();
+    // Attach click event to the newly added node
+    d3.selectAll('#node-container')
+      .on('click', function(d) {
+          selectNode(`"${d.data.id}"`); // Pass the ID as a string
+      });
   }
   
 
@@ -547,15 +590,14 @@
     const color = '#FFFFFF';
     const imageDiffVert = 25 + 2;
 
-   
-
     return `
       <div class="node-container" style='
       width:${d.width}px;
       height:${d.height}px;
       padding-top:${imageDiffVert - 2}px;
       padding-left:1px;
-      padding-right:1px'>
+      padding-right:1px'
+      onclick='selectNode(${d.data.id})'>
               <div class="content-container" style="font-family: 'Inter', sans-serif;  margin-left:-1px;width:${
                 d.width - 2
               }px;height:${
@@ -587,6 +629,137 @@
           </div>
       `;
   }
+
+  let selectedNodeIds = [];
+  
+  function collectDescendants(nodeId, data, collectedIds) {
+    data.forEach(node => {
+      if (String(node.parentId) === String(nodeId)) {
+          collectedIds.push(String(node.id));
+          // Recursively collect descendants of this node
+          collectDescendants(node.id, data, collectedIds);
+      }
+    });
+  }
+  // Function to find a node by its ID
+  function findNodeById(id, data) {
+    let result = null;
+    for (const node of data) {
+        if (String(node.id) === String(id)) {
+            result = node;
+            break;
+        }
+    }
+    return result;
+  }
+  // Integrate these functions into your chart's update/render logic
+  function expand(d) {
+    d._expanded = true;
+  }
+  function collapse(d) {
+    d._expanded = false;
+  }
+
+  function selectNode(nodeId) {
+      const nodeIdStr = String(nodeId);
+      const index = selectedNodeIds.indexOf(nodeIdStr);
+      const data = chart.getChartState().data;
+      let idsToRemove = [];
+      // Select the DOM element associated with the nodeId
+      const nodeElement = d3.selectAll('.content-container')
+      .filter(function() {
+          return this.querySelector('div').textContent.trim() === `#${nodeId}`;
+      });
+
+      // Get the border color of the selected node
+      const borderColor = nodeElement.style('border-color');
+      // console.log(`Border color of node ${nodeId}:`, borderColor);
+      if (index === -1) {
+        // Node is not selected, so select it
+        selectedNodeIds.push(nodeIdStr);
+        // Collect all descendants recursively
+        collectDescendants(nodeIdStr, data, selectedNodeIds);
+        // Expand all selected nodes
+        selectedNodeIds.forEach(id => {
+          const node = findNodeById(id, data);
+          if (node) {
+            // console.log(node);
+            expand(node);
+          }
+        });
+        chart.render();
+        //console.log("selectedNodeIds", selectedNodeIds);
+        // Highlight the selected node
+        selectedNodeIds.forEach(id => {
+          d3.selectAll('.content-container')
+              .filter(function() {
+                  return this.querySelector('div').textContent.trim() === `#${id}`;
+              })
+              .style('border', '2px solid #E27396'); // Highlight selected nodes
+        });
+      } else {
+        // Node is already selected, so deselect it
+        selectedNodeIds.splice(index, 1);
+        //console.log("idsToRemove", idsToRemove);
+        // Collect all descendants recursively for deselection
+        collectDescendants(nodeIdStr, data, idsToRemove);
+        idsToRemove.forEach(id => {
+            const childIndex = selectedNodeIds.indexOf(id);
+            if (childIndex !== -1) {
+                selectedNodeIds.splice(childIndex, 1);
+            }
+        });
+        // collapse all selected nodes
+        idsToRemove.forEach(id => {
+          const node = findNodeById(id, data);
+          if (node) {
+            // console.log(node);
+            collapse(node);
+          }
+        });
+        chart.render();
+        
+        
+        // Remove the highlight from the deselected node and its descendants
+        selectedNodeIds.forEach(id => {
+            d3.selectAll('.content-container')
+                .filter(function() {
+                    return this.querySelector('div').textContent.trim() === `#${id}`;
+                })
+                .style('border', '2px solid #E27396'); // add highlight from deselected nodes
+        });
+      }
+  }
+
+  function removeNode() {
+    if (selectedNodeIds.length === 0) return;  // If no nodes are selected, do nothing
+
+    const data = chart.getChartState().data;
+    console.log("Original Data:", data);
+
+    // Ensure all IDs are compared as strings
+    const updatedData = data.filter(node => {
+        console.log((node.id));
+        if (node.parentId === null){
+          return true;
+        }
+        const shouldRemove = selectedNodeIds.includes(String(node.id));
+        console.log(`Checking node with ID ${node.id}: shouldRemove = ${shouldRemove}`);
+        
+        return !shouldRemove;
+    });
+
+    console.log("Updated Data after filter:", updatedData);
+
+    if (updatedData.length !== data.length) {
+      chart.data(updatedData).render();  // Re-render the chart
+      selectedNodeIds = [];  // Reset the selected node IDs
+      console.log("Nodes have been removed and the chart has been re-rendered.");
+    } else {
+      console.log("No nodes were removed.");
+    }
+  }
+
 </script>
 
 
@@ -608,39 +781,31 @@
     <button class="btn-close d-lg-none" type="button" aria-label="Close" onclick="coreui.Sidebar.getInstance(document.querySelector(&quot;#sidebar&quot;)).toggle()"></button>
     </div>
     <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
-        <li class="nav-item"><a class="nav-link" href="index.html">
+        <li class="nav-item"><a class="nav-link" draggable="false" href="index.html">
             <svg class="nav-icon">
                 <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-speedometer"></use>
-            </svg><span data-coreui-i18n="dashboard">Dashboard</span></a></li>
-        <li class="nav-title" data-coreui-i18n="theme">Theme</li>
-        <li class="nav-item"><a class="nav-link" href="colors.html">
-            <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-drop"></use>
-            </svg><span data-coreui-i18n="colors">Colors</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="typography.html">
-            <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-pencil"></use>
-            </svg><span data-coreui-i18n="typography"> Typography</span></a></li>
+            </svg><span data-coreui-i18n="dashboard" >Dashboard</span></a>
+        </li>
         <li class="nav-title" data-coreui-i18n="components">Components</li>
-        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
+        <li class="nav-group"><a class="nav-link nav-group-toggle" draggable="false" href="#">
             <svg class="nav-icon">
                 <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-puzzle"></use>
             </svg><span data-coreui-i18n="base">Base</span></a>
             <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="base/accordion.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span><span data-coreui-i18n="accordion">Accordion</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="base/breadcrumb.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Breadcrumb</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/cards.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Cards</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/carousel.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Carousel</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/collapse.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Collapse</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/list-group.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> List group</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/navs-tabs.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Navs &amp; Tabs</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/pagination.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Pagination</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/placeholders.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Placeholders</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/popovers.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Popovers</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/progress.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Progress</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/spinners.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Spinners</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/tables.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Tables</a></li>
-            <li class="nav-item"><a class="nav-link" href="base/tooltips.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Tooltips</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/accordion.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span><span data-coreui-i18n="accordion">Accordion</span></a></li>
+              <li class="nav-item"><a class="nav-link" href="base/breadcrumb.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Breadcrumb</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/cards.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Cards</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/carousel.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Carousel</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/collapse.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Collapse</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/list-group.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> List group</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/navs-tabs.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Navs &amp; Tabs</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/pagination.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Pagination</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/placeholders.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Placeholders</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/popovers.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Popovers</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/progress.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Progress</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/spinners.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Spinners</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/tables.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Tables</a></li>
+              <li class="nav-item"><a class="nav-link" href="base/tooltips.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Tooltips</a></li>
             </ul>
         </li>
         <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
@@ -699,121 +864,26 @@
                 <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-calculator"></use>
             </svg><span data-coreui-i18n="widgets">Widgets</span><span class="badge bg-info-gradient text-uppercase ms-auto" data-coreui-i18n="new">New</span></a></li>
         <li class="nav-divider"></li>
-        <li class="nav-title" data-coreui-i18n="plugins">
-            Plugins</li>
-        <li class="nav-item"><a class="nav-link" href="calendar.html">
-            <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-calendar"></use>
-            </svg><span data-coreui-i18n="calendar">Calendar</span><span class="badge bg-danger-gradient ms-auto">PRO</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="charts.html">
-            <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-chart-pie"></use>
-            </svg><span data-coreui-i18n="charts">Charts</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="datatables.html">
-            <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-spreadsheet"></use>
-            </svg> DataTables<span class="badge bg-danger-gradient ms-auto">PRO</span></a></li>
-        <li class="nav-item"><a class="nav-link" href="google-maps.html">
-            <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-map"></use>
-            </svg> Google Maps<span class="badge bg-danger-gradient ms-auto">PRO</span></a></li>
-        <li class="nav-title" data-coreui-i18n="extras">
-            Extras</li>
-        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
-            <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-star"></use>
-            </svg><span data-coreui-i18n="pages">Pages</span></a>
-            <ul class="nav-group-items compact">
-            <li class="nav-item"><a class="nav-link" href="login.html" target="_top">
-                <svg class="nav-icon">
-                    <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-account-logout"></use>
-                </svg><span data-coreui-i18n="login">Login</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="register.html" target="_top">
-                <svg class="nav-icon">
-                    <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-account-logout"></use>
-                </svg><span data-coreui-i18n="register">Register</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="404.html" target="_top">
-                <svg class="nav-icon">
-                    <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bug"></use>
-                </svg><span data-coreui-i18n="error404">Error 404</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="500.html" target="_top">
-                <svg class="nav-icon">
-                    <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bug"></use>
-                </svg><span data-coreui-i18n="error500">Error 500</span></a></li>
-            </ul>
-        </li>
-        <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
-            <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-layers"></use>
-            </svg><span data-coreui-i18n="apps">Apps</span></a>
-            <ul class="nav-group-items compact">
-            <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
-                <svg class="nav-icon">
-                    <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-description"></use>
-                </svg> Invoicing</a>
-                <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="apps/invoicing/invoice.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Invoice<span class="badge bg-danger-gradient ms-auto">PRO</span></a></li>
-                </ul>
-            </li>
-            <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
-                <svg class="nav-icon">
-                    <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
-                </svg> Email</a>
-                <ul class="nav-group-items compact">
-                <li class="nav-item"><a class="nav-link" href="apps/email/inbox.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Inbox<span class="badge bg-danger-gradient ms-auto">PRO</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="apps/email/message.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Message<span class="badge bg-danger-gradient ms-auto">PRO</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="apps/email/compose.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Compose<span class="badge bg-danger-gradient ms-auto">PRO</span></a></li>
-                </ul>
-            </li>
-            </ul>
-        </li>
-        <li class="nav-item mt-auto"><a class="nav-link" href="https://coreui.io/docs/templates/installation/" target="_blank">
-            <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-description"></use>
-            </svg><span data-coreui-i18n="docs">Docs</span></a></li>
-        <li class="nav-title"><span data-coreui-i18n="systemUtilization">System Utilization</span></li>
-        <li class="nav-item px-3 pb-2 d-narrow-none">
-            <div class="text-uppercase small fw-bold mb-1" data-coreui-i18n="cpuUsage">CPU Usage</div>
-            <div class="progress progress-thin">
-            <div class="progress-bar bg-info-gradient" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-            <div class="small text-body-secondary" data-coreui-i18n="cpuUsageDescription, { 'number_of_processes': 358, 'number_of_cores': '1/4' }">348 Processes. 1/4 Cores.</div>
-        </li>
-        <li class="nav-item px-3 pb-2 d-narrow-none">
-            <div class="text-uppercase small fw-bold mb-1" data-coreui-i18n="memoryUsage">Memory Usage</div>
-            <div class="progress progress-thin">
-            <div class="progress-bar bg-warning-gradient" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-            <div class="small text-body-secondary">11444MB/16384MB</div>
-        </li>
-        <li class="nav-item px-3 pb-2 mb-3 d-narrow-none">
-            <div class="text-uppercase small fw-bold mb-1" data-coreui-i18n="ssdUsage">SSD Usage</div>
-            <div class="progress progress-thin">
-            <div class="progress-bar bg-danger-gradient" role="progressbar" style="width: 95%" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
-            </div>
-            <div class="small text-body-secondary">243GB/256GB</div>
-        </li>
+        
     </ul>
     <div class="sidebar-footer border-top d-none d-lg-flex">
     <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
     </div>
 </div>
 
-
-  
 <div class="wrapper d-flex flex-column min-vh-100" style="height:100%;">
     <header class="header header-sticky p-0">
         <div class="container-fluid px-4 border-bottom">
-            <button class="header-toggler" type="button"  style="margin-inline-start: -14px">
+            <button class="header-toggler" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()" style="margin-inline-start: -14px">
             <svg class="icon icon-lg">
                 <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-menu"></use>
             </svg>
             </button>
             
             <ul class="header-nav ms-auto ms-md-0">
-                  <li class="nav-item">
+                <li class="nav-item">
                     <div class="chart-holder">
-                      <button class="btn btn-link nav-link" id="enableDragButton" onclick="enableDrag()" title="Organize">
+                      <button class="btn btn-link nav-link" id="enableDragButton" onclick="enableDrag()" title="Organize" aria-expanded="false">
                         <img src="https://cdn-icons-png.flaticon.com/512/10348/10348649.png" alt="Icon" style="width: 21px; height: 20px;">
                       </button>
                       <div id="dragActions" class="hide">
@@ -831,276 +901,140 @@
                       </button>
                     </div>                  
                 </li>
-                <li class="nav-item py-1">
-                    <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
-                </li>
-                <li class="nav-item dropdown">
-                    <button class="btn btn-link nav-link" type="button" aria-expanded="false" data-coreui-toggle="dropdown">
-                    <svg class="icon icon-lg">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-language"></use>
-                    </svg>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" style="--cui-dropdown-min-width: 8rem;">
-                    <li>
-                        <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-language-value="en" onclick="i18next.changeLanguage(&quot;en&quot;)">
-                        <svg class="icon icon-lg me-3">
-                            <use xlink:href="vendors/@coreui/icons/svg/flag.svg#cif-gb"></use>
-                        </svg>English
-                        </button>
-                    </li>
-                    <li>
-                        <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-language-value="es" onclick="i18next.changeLanguage(&quot;es&quot;)">
-                        <svg class="icon icon-lg me-3">
-                            <use xlink:href="vendors/@coreui/icons/svg/flag.svg#cif-es"></use>
-                        </svg>Español
-                        </button>
-                    </li>
-                    <li>
-                        <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-language-value="pl" onclick="i18next.changeLanguage(&quot;pl&quot;)">
-                        <svg class="icon icon-lg me-3">
-                            <use xlink:href="vendors/@coreui/icons/svg/flag.svg#cif-pl"></use>
-                        </svg>Polski
-                        </button>
-                    </li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <button class="btn btn-link nav-link" type="button" aria-expanded="false" data-coreui-toggle="dropdown">
-                    <svg class="icon icon-lg theme-icon-active">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-contrast"></use>
-                    </svg>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" style="--cui-dropdown-min-width: 8rem;">
-                    <li>
-                        <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-theme-value="light">
-                        <svg class="icon icon-lg me-3">
-                            <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-sun"></use>
-                        </svg><span data-coreui-i18n="light">Light</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-theme-value="dark">
-                        <svg class="icon icon-lg me-3">
-                            <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-moon"></use>
-                        </svg><span data-coreui-i18n="dark"> Dark</span>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="dropdown-item d-flex align-items-center active" type="button" data-coreui-theme-value="auto">
-                        <svg class="icon icon-lg me-3">
-                            <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-contrast"></use>
-                        </svg>Auto
-                        </button>
-                    </li>
-                    </ul>
+                <li class="nav-item">
+                  <button class="btn btn-link nav-link" type="button" aria-expanded="false" title="Delete" onclick='removeNode()' ${selectedNodeIds.length === 0 ? 'disabled' : ''}>
+                    <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" alt="Icon" style="width: 21px; height: 20px;">
+                  </button>
                 </li>
                 <li class="nav-item py-1">
-                    <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+                  <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
                 </li>
-                <li class="nav-item dropdown"><a class="nav-link py-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <div class="avatar avatar-md"><img class="avatar-img" src="assets/img/avatars/8.jpg" alt="user@email.com"></div>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end pt-0">
-                    <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2" data-coreui-i18n="account">Account</div><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
-                        </svg><span data-coreui-i18n="updates">Updates</span><span class="badge badge-sm bg-info-gradient ms-2">42</span></a><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
-                        </svg><span data-coreui-i18n="messages">Messages</span><span class="badge badge-sm badge-sm bg-success ms-2">42</span></a><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-task"></use>
-                        </svg><span data-coreui-i18n="tasks">Tasks</span><span class="badge badge-sm bg-danger-gradient ms-2">42</span></a><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-comment-square"></use>
-                        </svg><span data-coreui-i18n="comments">Comments</span><span class="badge badge-sm bg-warning-gradient ms-2">42</span></a>
-                    <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2" data-coreui-i18n="settings">Settings</div><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-user"></use>
-                        </svg><span data-coreui-i18n="profile">Profile</span></a><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-settings"></use>
-                        </svg><span data-coreui-i18n="settings">Settings</span></a><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-credit-card"></use>
-                        </svg><span data-coreui-i18n="payments">Payments</span><span class="badge badge-sm bg-secondary-gradient text-dark ms-2">42</span></a><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-file"></use>
-                        </svg><span data-coreui-i18n="projects">Projects</span><span class="badge badge-sm bg-primary-gradient ms-2">42</span></a>
-                    <div class="dropdown-divider"></div><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-lock-locked"></use>
-                        </svg><span data-coreui-i18n="lockAccount">Lock Account</span></a><a class="dropdown-item" href="#">
-                        <svg class="icon me-2">
-                        <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-account-logout"></use>
-                        </svg><span data-coreui-i18n="logout">Logout</span></a>
-                    </div>
+                <li>
+                  <button onclick='chart.layout(["right","bottom","left","top"][index++%4]).render().fit()'
+                    class="btn btn-link nav-link" title="Swap">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4361/4361396.png" alt="Icon" style="width: 21px; height: 20px;">
+                  </button>
                 </li>
+                <li>
+                  <button onclick="chart.compact(!!(compact++%2)).render().fit()"
+                    class="btn btn-link nav-link" title="Compact">
+                    <img src="https://cdn-icons-png.flaticon.com/512/854/854125.png" alt="Icon" style="width: 21px; height: 20px;">
+                  </button>
+                </li>
+                <li>
+                  <button onclick="chart.fit()"
+                    class="btn btn-link nav-link" title="Screen Fit">
+                    <img src="https://cdn-icons-png.flaticon.com/512/16126/16126638.png" alt="Icon" style="width: 21px; height: 20px;">
+                  </button>
+                </li>
+                
+                <li class="nav-item py-1">
+                  <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+                </li>
+                <li>
+                  <button onclick="chart.exportImg({full:true})" class="btn btn-link nav-link" title="Download Image">
+                    <img src="https://cdn-icons-png.flaticon.com/512/7245/7245427.png" alt="Icon" style="width: 21px; height: 20px;">
+                  </button>
+                </li>
+                <li>
+                  <button onclick="chart.exportSvg()" class="btn btn-link nav-link" title="Download SVG">
+                     <img src="https://cdn-icons-png.flaticon.com/512/12223/12223791.png" alt="Icon" style="width: 21px; height: 20px;">
+                  </button>
+                </li>
+                <li class="nav-item dropdown">
+                  <button class="btn btn-link nav-link" type="button" aria-expanded="false" data-coreui-toggle="dropdown">
+                  <svg class="icon icon-lg theme-icon-active">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-contrast"></use>
+                  </svg>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end" style="--cui-dropdown-min-width: 8rem;">
+                  <li>
+                      <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-theme-value="light">
+                      <svg class="icon icon-lg me-3">
+                          <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-sun"></use>
+                      </svg><span data-coreui-i18n="light">Light</span>
+                      </button>
+                  </li>
+                  <li>
+                      <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-theme-value="dark">
+                      <svg class="icon icon-lg me-3">
+                          <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-moon"></use>
+                      </svg><span data-coreui-i18n="dark"> Dark</span>
+                      </button>
+                  </li>
+                  <li>
+                      <button class="dropdown-item d-flex align-items-center active" type="button" data-coreui-theme-value="auto">
+                      <svg class="icon icon-lg me-3">
+                          <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-contrast"></use>
+                      </svg>Auto
+                      </button>
+                  </li>
+                  </ul>
+                </li>
+                
+                
+                
+                
             </ul>
-            <button id="options-btn" class="header-toggler" type="button" style="margin-inline-end: -12px">
-            <svg class="icon icon-lg">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-applications-settings"></use>
-            </svg>
-            </button>
+            <ul class="header-nav ms-auto ms-md-0">
+              <!--Profile-->
+              <li class="nav-item dropdown" ><a class="nav-link py-0" draggable="false" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true">
+                  <div class="avatar avatar-md"><img class="avatar-img" draggable="false" src="assets/img/avatars/8.jpg" alt="user@email.com"></div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end pt-0">
+                  <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2"  data-coreui-i18n="account">Account</div><a class="dropdown-item" href="#" draggable="false">
+                    <svg class="icon me-2">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
+                    </svg><span data-coreui-i18n="updates" draggable="false">Updates</span><span class="badge badge-sm bg-info-gradient ms-2">42</span></a><a class="dropdown-item" href="#" >
+                    <svg class="icon me-2">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
+                    </svg><span data-coreui-i18n="messages">Messages</span><span class="badge badge-sm badge-sm bg-success ms-2">42</span></a><a class="dropdown-item" href="#">
+                    <svg class="icon me-2">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-task"></use>
+                    </svg><span data-coreui-i18n="tasks">Tasks</span><span class="badge badge-sm bg-danger-gradient ms-2">42</span></a><a class="dropdown-item" href="#">
+                    <svg class="icon me-2">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-comment-square"></use>
+                    </svg><span data-coreui-i18n="comments">Comments</span><span class="badge badge-sm bg-warning-gradient ms-2">42</span></a>
+                  <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2" data-coreui-i18n="settings">Settings</div><a class="dropdown-item" href="#" draggable="false">
+                    <svg class="icon me-2">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-user"></use>
+                    </svg><span data-coreui-i18n="profile">Profile</span></a><a class="dropdown-item" href="#">
+                    <svg class="icon me-2">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-settings"></use>
+                    </svg><span data-coreui-i18n="settings">Settings</span></a><a class="dropdown-item" href="#">
+                    <svg class="icon me-2">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-credit-card"></use>
+                    </svg><span data-coreui-i18n="payments">Payments</span><span class="badge badge-sm bg-secondary-gradient text-dark ms-2">42</span></a><a class="dropdown-item" href="#">
+                    <svg class="icon me-2">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-file"></use>
+                    </svg><span data-coreui-i18n="projects">Projects</span><span class="badge badge-sm bg-primary-gradient ms-2">42</span></a>
+                  <div class="dropdown-divider"></div><a class="dropdown-item" href="#" draggable="false">
+                    <svg class="icon me-2">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-lock-locked"></use>
+                    </svg><span data-coreui-i18n="lockAccount">Lock Account</span></a><a class="dropdown-item" href="#">
+                    <svg class="icon me-2">
+                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-account-logout"></use>
+                    </svg><span data-coreui-i18n="logout">Logout</span></a>
+                </div>
+              </li>
+            </ul>
+            
         </div>
     </header>
 
-    <div class="action-buttons">
-  
-        <button
-          onclick='chart.removeNode("101")'
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-user-times"></i> remove</button
-        ><br />
-  
-        <button
-          onclick="chart.fit()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-sync"></i> fit
-        </button>
-        <br />
-  
-        <button
-          onclick='chart.layout(["right","bottom","left","top"][index++%4]).render().fit()'
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-retweet"></i> swap
-        </button>
-        <br />
-  
-        <button
-          onclick="chart.compact(!!(compact++%2)).render().fit()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-sitemap"></i> compact
-        </button>
-        <br />
-  
-        <button
-          onclick="chart.setActiveNodeCentered(!!(actNdCent++%2)).render()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-border-none"></i> center Active
-        </button>
-        <br />
-  
-        <button
-          onclick='chart.setCentered("O-6162").render()'
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-compress-arrows-alt"></i> center
-        </button>
-        <br />
-        <button
-          onclick='chart.setHighlighted("O-6162").render()'
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-highlighter"></i> mark</button
-        ><br />
-        <button
-          onclick='chart.setUpToTheRootHighlighted("O-6162").render().fit()'
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-route"></i> mark root
-        </button>
-        <br />
-        <button
-          onclick="chart.clearHighlighting()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-eraser"></i> clear mark
-        </button>
-        <br />
-        <button
-          onclick="chart.fullscreen('body')"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-expand"></i> fullscreen</button
-        ><br />
-  
-        <button
-          onclick="chart.exportImg()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="far fa-images"></i> export img
-        </button>
-        <br />
-  
-        <button
-          onclick="chart.exportImg({full:true})"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="far fa-images"></i> export full img
-        </button>
-        <br />
-  
-        <button
-          onclick="chart.exportSvg()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-file-download"></i> export svg
-        </button>
-        <br />
-        <button
-          onclick="chart.expandAll()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-angle-double-down"></i> expand all</button
-        ><br />
-  
-        <button
-          onclick="chart.collapseAll()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-angle-double-up"></i> collapse all</button
-        ><br />
-  
-        <button
-          onclick="downloadPdf()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="far fa-file-pdf"></i> export pdf
-        </button>
-        <br />
-  
-        <button
-          onclick='chart.connections([{from:"O-6069",to:"O-6070",label:"Conflicts of interest"}]).render()'
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-project-diagram"></i> add link
-        </button>
-        <br />
-  
-        <button
-          onclick="chart.zoomOut()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-minus"></i> zoom out</button
-        ><br />
-        <button
-          onclick="chart.zoomIn()"
-          class="btn btn-action-button waves-effect waves-light"
-        >
-          <i class="fas fa-plus"></i> zoom in
-        </button>
-        <br />
-    </div>
-
-  
     <!--
     End of adding node functionality
     -->
-    <div class="chart-container" style="height:100%; background-color:white;"></div>
+    
+    <div class="chart-container" style="height:100%; background-color:white;">
+      <div class="zoom-buttons">
+        <button onclick="chart.zoomIn()">+</button>
+        <button onclick="chart.zoomOut()">−</button>
+      </div>
+    </div>
     
     
 </div>
-
-
-
-
-
 
 
 <script>
@@ -1147,18 +1081,4 @@
       header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
     }
   });
-</script>
-<script>
-    document.getElementById('options-btn').addEventListener('click', function() {
-        var actionButtons = document.querySelector('.action-buttons');
-        if (actionButtons.classList.contains('open')) {
-          actionButtons.classList.remove('open');
-        } else {
-          actionButtons.classList.add('open');
-        }
-        
-        // Keep the existing sidebar toggle behavior
-        // coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle();
-      });
-      
 </script>
