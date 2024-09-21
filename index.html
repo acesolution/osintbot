@@ -2,9 +2,7 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.js"></script>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" 
 />
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -18,7 +16,6 @@
 <!-- We use those styles to show code examples, you should remove them in your application.-->
 <link href="css/examples.css" rel="stylesheet">
 <script src="js/config.js"></script>
-<script src="js/color-modes.js"></script>
 
 <style type="text/css">
   .hide {
@@ -182,12 +179,13 @@
     .zoom-buttons button:hover {
         background-color: #e0e0e0;
     }
+
   
 
 </style>
 
 <script>
-  
+  var chart = null;
   let dragNode;
   let dropNode;
   let dragEnabled = false;
@@ -200,49 +198,60 @@
 
   // This is the data used - https://github.com/bumbeishvili/sample-data/blob/main/data-oracle.csv
   const data = [
-  {
-    id: 100,
-    parentId: null,
-    name: 'Steven',
-    position: 'Chief Operating Officer',
-    image: 'https://bumbeishvili.github.io/avatars/avatars/portrait12.png',
-    
-  },
-  {
-    id: 101,
-    parentId: 100,
-    name: 'Neena',
-    position: 'Administration Vice President',
-    image: 'https://bumbeishvili.github.io/avatars/avatars/portrait85.png',
-    
-  },
-  {
-    id: 102,
-    parentId: 100,
-    name: 'Lex',
-    position: 'Administration Vice President',
-    image: 'https://bumbeishvili.github.io/avatars/avatars/portrait16.png',
-    
-  },
-  {
-    id: 103,
-    parentId: 101,
-    name: 'Lex',
-    position: 'Administration Vice President',
-    image: 'https://bumbeishvili.github.io/avatars/avatars/portrait16.png',
-    
-  },
+    {
+      id: 100,
+      parentId: null,
+      name: 'Steven',
+      position: 'Chief Operating Officer',
+      image: 'https://bumbeishvili.github.io/avatars/avatars/portrait12.png',
+      
+    },
+    {
+      id: 101,
+      parentId: 100,
+      name: 'Neena',
+      position: 'Administration Vice President',
+      image: 'https://bumbeishvili.github.io/avatars/avatars/portrait85.png',
+      
+    },
+    {
+      id: 102,
+      parentId: 100,
+      name: 'Lex',
+      position: 'Administration Vice President',
+      image: 'https://bumbeishvili.github.io/avatars/avatars/portrait16.png',
+      
+    },
+    {
+      id: 103,
+      parentId: 101,
+      name: 'Lex',
+      position: 'Administration Vice President',
+      image: 'https://bumbeishvili.github.io/avatars/avatars/portrait16.png',
+      
+    },
   ]
+
+
   
-  let chart;
-  document.addEventListener('DOMContentLoaded', function () {
+  d3.csv(
+    'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
+  ).then((data) => {
+    const limitedData = data.slice(0, 20);
     chart = new d3.OrgChart()
       .nodeHeight((d) => 85 + 25)
       .nodeWidth((d) => 220 + 2)
       .childrenMargin((d) => 50)
-      .compactMarginBetween((d) => 35)
-      .compactMarginPair((d) => 30)
-      .neighbourMargin((a, b) => 20)
+      .compactMarginBetween((d) => 20)
+      .siblingsMargin(function (d) {
+        return 30;
+      })
+      .compactMarginPair(function (d) {
+        return 30;
+      })
+      .neighbourMargin(function(a, b) { 
+        return 30;
+      })
       .nodeContent(function (d, i, arr, state) {
         return generateContent(d);
       })
@@ -265,23 +274,44 @@
         );
       })
       .nodeUpdate(function (d) {
-        
-        d3.select(this).classed('droppable', true);
-  
+        console.log('node update d', d);
+        if (d.id === '120' || d.id === '124') {
+          d3.select(this).classed('droppable', false);
+        } else {
+          d3.select(this).classed('droppable', true);
+        }
+
         if (d.id === '100') {
           d3.select(this).classed('draggable', false);
         } else {
           d3.select(this).classed('draggable', true);
         }
       })
+      
+      .onExpandOrCollapse(function (d) {
+        if(d.children){
+          chlidern = d.children[0];
+          console.log('chlidern.data._expanded', chlidern.data._expanded);
+          if (chlidern.data._expanded) {
+            console.log('node expended', d);
+            //updatePathBasedOnDrop(d, 'expension');
+            //updatePathBasedOnExpend(d);
+          } else {
+            console.log('Node is collapsed');
+          }
+        } else{
+          console.log('node is collapsed 2')
+        }
+      })
       .container('.chart-container')
-      .data(data)
+      .data(limitedData)
       .render();
     // Add event listeners to list items after the DOM has loaded
     addDragEventListenersToFilterItems();
     addDropEventListenersToChart();
   });
 
+  
   function addDragEventListenersToFilterItems() {
     const filterLists = document.querySelectorAll('.nav-group-items a');
     filterLists.forEach((item) => {
@@ -300,7 +330,6 @@
       e.preventDefault();
       e.dataTransfer.dropEffect = 'copy'; // Indicate the type of operation
     });
-  
     chartContainer.addEventListener('drop', function (e) {
       e.preventDefault();
       const nodeName = e.dataTransfer.getData('text/plain');
@@ -324,7 +353,7 @@
 
     let lastId = 0;
     const data = chart.getChartState().data;
-    console.log(data);
+    console.log('chart.getChartState()', chart.getChartState());
     // Find the highest existing numeric ID
     data.forEach(node => {
         const nodeId = parseInt(node.id, 10); // Parse the ID as an integer
@@ -347,9 +376,19 @@
   
     // Update chart data
     data.push(newNode);
-  
+    const isEmpty = (obj) => Object.entries(obj).length === 0;
+
+    if (!(isEmpty(tempNodeSave))){
+      chart.data(data).render();
+      const layout = chart.layoutBindings(); // Current layout bindings
+      layout.top.nodeUpdateTransform = function(d) {
+        
+      };
+      chart.layoutBindings(layout);
+    }else{
     // Re-render the chart
     chart.data(data).render();
+    }
     // Attach click event to the newly added node
     d3.selectAll('#node-container')
       .on('click', function(d) {
@@ -357,7 +396,6 @@
       });
   }
   
-
   function onDragStart(element, dragEvent, node) {
     dragNode = node;
     const width = dragEvent.subject.width;
@@ -454,18 +492,29 @@
   }
 
   function onDragEnd(element, dragEvent) {
+    console.log('dragNode', dragNode);
+    console.log('dropNode', dropNode);
+    
+
     document
       .querySelector('.chart-container')
       .classList.remove('dragging-active');
 
     if (!dragNode) {
+      console.log('dragnode');
       return;
     }
 
     d3.select(element).classed('dragging', false);
 
     if (!dropNode) {
-      chart.render();
+      console.log('dropnode');
+      //chart.render();
+      const data = chart.getChartState().data;
+      const node = data.find((x) => String(x.id) === String(dragEvent.subject.id));
+      if (node) {
+        updatePathBasedOnDrop(dragEvent, "dragevent"); // Pass the node itself
+      }
       return;
     }
 
@@ -473,23 +522,10 @@
       chart.render();
       return;
     }
-
     d3.select(element).remove();
 
     const data = chart.getChartState().data;
-    console.log(data);
-    console.log(dragEvent.subject.id);
-    let node = null;
-    data?.forEach((x, index) => {
-        console.log(typeof(dragEvent.subject.id));
-        console.log(typeof(x.id));
-        if (String(x.id) === String(dragEvent.subject.id)) {  // Convert dragEvent.subject.id to a number
-            node = x; // Assign the matching node to the variable
-            console.log("success");
-            return;
-        }
-    });
-    console.log(node);
+    const node = data?.find((x) => x.id === dragEvent.subject.id);
     const oldParentId = node.parentId;
     node.parentId = dropNode.id;
 
@@ -501,8 +537,817 @@
 
     dropNode = null;
     dragNode = null;
-    chart.render();
+    //chart.render();
     updateDragActions();
+  }
+
+  
+  let tempNodeSave = {};
+  let tempNodeChildSave = {};
+
+  function updatePathBasedOnExpend(node){
+    console.log('node1', node);
+    const layout = chart.layoutBindings(); // Current layout bindings
+    const data = chart.getChartState().data;
+    const nodeData = data.find(x => String(x.id) === String(node.id));
+    console.log('tempNodeSave', tempNodeSave);
+    if (nodeData) {
+    console.log('nodeData', nodeData);
+    console.log('layout', layout);
+
+      let tempDic = {};
+      // Update for 'top' binding
+      layout.top.nodeUpdateTransform = function(d) {
+        console.log('d', d);
+        const tolerance = 15;  // Define a small tolerance value
+        // Check if d.x and node.subject.x are close enough
+        if (Math.abs(d.x - node.x) <= tolerance && d.y === node.y) {
+          let newX;
+          if (d.x >= 0) {
+            // For positive d.x
+            newX = node.x - d.x;
+          } else {
+            // For negative d.x
+            newX = node.x - Math.abs(d.x);
+          }
+          if (tempNodeSave[node.id]){
+            if (d.x >= 0) {
+              // For positive d.x
+              newX = tempNodeSave[node.id].newX + newX;
+            }
+          }
+          tempNodeSave[node.id] = {
+            parentId: node.parent.data.id,
+            x: d.x,
+            y: node.y,
+            width: '222',
+            newX: newX,
+            nodeSelf: d,
+          };
+          return `translate(${newX },${d.y})`;
+        } else {
+          // Retrieve and work with previously stored data
+          for (const [id, savedData] of Object.entries(tempNodeSave)) {
+            if (savedData.x === d.x && savedData.y === d.y) {
+              console.log('1');
+              return `translate(${savedData.newX}, ${d.y})`;
+            }
+          }
+          return `translate(${d.x - node.subject.width / 2}, ${d.y})`;
+        }
+      };
+    }
+  }
+
+  function updatePathBasedOnDrop(node_main, parameter) {
+    const layout = chart.layoutBindings(); // Current layout bindings
+    const data = chart.getChartState().data;
+  
+    chart.calculateCompactFlexPositions = function (root) {
+      const attrs = chart.getChartState();
+      root.eachBefore(node => {
+        if (node.children) {
+          const compactChildren = node.children.filter(d => d.flexCompactDim);
+          const fch = compactChildren[0];
+          
+          if (!fch) return;
+          console.log('returned');
+          // Adjust x positions of compact children
+          compactChildren.forEach((child, i, arr) => {
+            if (i == 0) {
+              fch.x -= fch.flexCompactDim[0] / 2;
+              //console.log('fch.x', fch.x, child);
+            }
+            if (i & i % 2 - 1) 
+            {
+              child.x = fch.x + fch.flexCompactDim[0] * 0.25 - attrs.compactMarginPair(child) / 4;
+              //console.log('child.x if', child.x, child);
+            }
+            else if (i) {
+              child.x = fch.x + fch.flexCompactDim[0] * 0.75 + attrs.compactMarginPair(child) / 4;
+              //console.log('child.x else', child.x, child);
+            }
+
+          });
+
+          // Calculate center position and apply offset
+          const centerX = fch.x + fch.flexCompactDim[0] * 0.5;
+          fch.x = fch.x + fch.flexCompactDim[0] * 0.25 - attrs.compactMarginPair(fch) / 4;
+          const offsetX = node.x - centerX;
+          if (Math.abs(offsetX) < 10) {
+            compactChildren.forEach(d => d.x += offsetX);
+          }
+
+          // Group by rows and adjust y positions
+          const rowsMapNew = chart.groupBy(
+            compactChildren, 
+            d => d.row, 
+            reducedGroup => d3.max(reducedGroup, d => 
+              attrs.layoutBindings[attrs.layout].compactDimension.sizeRow(d)
+            )
+          );
+          const cumSum = d3.cumsum(rowsMapNew.map(d => d[1] + attrs.compactMarginBetween(d)));
+          compactChildren.forEach((node, i) => {
+            if (node.row) {
+              node.y = fch.y + cumSum[node.row - 1];
+            } else {
+              node.y = fch.y;
+            }
+          });
+
+          // Add your custom coordinate adjustments here
+          // Example: Further adjust x/y based on additional conditions
+          compactChildren.forEach((child) => {
+            
+            if(child.id === node_main.subject.id){
+              child.x = node_main.x;
+              tempNodeChildSave[child.id] = {
+                parentId: child.parent.id,
+                id:child.id,
+                x: node_main.x,
+                y: child.y,
+                width: '222',
+                nodeSelf: child,
+              };
+            }
+            else{
+              for (const [id, savedData] of Object.entries(tempNodeChildSave)) {
+                if (savedData.id === child.id) {
+                  //console.log('linkCompactXStart loop', savedData.newX + (node.compactEven ? node.width / 2 : -node.width / 2))
+                  child.x = savedData.x;
+                  
+                }
+              }
+            }
+            // Example logic - customize as needed
+            if (child.someCustomCondition) {
+              
+              // Adjust child's x and y based on your own rules
+              child.x += 10; // Example adjustment
+              child.y -= 5;  // Example adjustment
+            }
+          });
+        }
+      });
+    };  
+    
+    /*chart.update = function({ x0, y0, x = 0, y = 0, width, height }) {
+      console.log('update called', x0, y0, x, y, width, height);
+      const attrs = chart.getChartState();
+      const calc = attrs.calc;
+
+      // Paging
+      if (attrs.compact) {
+        console.log('attrs.compact', attrs.compact)
+        this.calculateCompactFlexDimensions(attrs.root);
+      }
+
+      //  Assigns the x and y position for the nodes
+      const treeData = attrs.flexTreeLayout(attrs.root);
+      console.log('treeData', treeData);
+      // Reassigns the x and y position for the based on the compact layout
+      if (attrs.compact) {
+        calculateCompactFlexPositions(attrs.root);
+      }
+
+      const nodes = treeData.descendants();
+      console.log('nodes', nodes);
+      // console.table(nodes.map(d => ({ x: d.x, y: d.y, width: d.width, height: d.height, flexCompactDim: d.flexCompactDim + "" })))
+
+      // Get all links
+      const links = treeData.descendants().slice(1);
+      nodes.forEach(attrs.layoutBindings[attrs.layout].swap)
+
+      // Connections
+      const connections = attrs.connections;
+      const allNodesMap = {};
+      attrs.allNodes.forEach(d => allNodesMap[attrs.nodeId(d.data)] = d);
+
+      const visibleNodesMap = {}
+      nodes.forEach(d => visibleNodesMap[attrs.nodeId(d.data)] = d);
+
+      connections.forEach(connection => {
+          const source = allNodesMap[connection.from];
+          const target = allNodesMap[connection.to];
+          connection._source = source;
+          connection._target = target;
+      })
+      const visibleConnections = connections.filter(d => visibleNodesMap[d.from] && visibleNodesMap[d.to]);
+      const defsString = attrs.defs.bind(this)(attrs, visibleConnections);
+      const existingString = attrs.defsWrapper.html();
+      if (defsString !== existingString) {
+          attrs.defsWrapper.html(defsString)
+      }
+
+      // --------------------------  LINKS ----------------------
+      // Get links selection
+      const linkSelection = attrs.linksWrapper
+          .selectAll("path.link")
+          .data(links, (d) => attrs.nodeId(d.data));
+
+      // Enter any new links at the parent's previous position.
+      const linkEnter = linkSelection
+          .enter()
+          .insert("path", "g")
+          .attr("class", "link")
+          .attr("d", (d) => {
+              const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x: x0, y: y0, width, height });
+              const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x: x0, y: y0, width, height });
+              const o = { x: xo, y: yo };
+              return attrs.layoutBindings[attrs.layout].diagonal(o, o, o);
+          });
+
+      // Get links update selection
+      const linkUpdate = linkEnter.merge(linkSelection);
+
+      // Styling links
+      linkUpdate
+          .attr("fill", "none")
+
+
+      if (this.isEdge()) {
+          linkUpdate
+              .style('display', d => {
+                  const display = d.data._pagingButton ? 'none' : 'auto'
+                  return display;
+              })
+      } else {
+          linkUpdate
+              .attr('display', d => {
+                  const display = d.data._pagingButton ? 'none' : 'auto'
+                  return display;
+              })
+      }
+
+      // Allow external modifications
+      linkUpdate.each(attrs.linkUpdate);
+
+      // Transition back to the parent element position
+      linkUpdate
+          .transition()
+          .duration(attrs.duration)
+          .attr("d", (d) => {
+              const n = attrs.compact && d.flexCompactDim ?
+                  {
+                      x: attrs.layoutBindings[attrs.layout].compactLinkMidX(d, attrs),
+                      y: attrs.layoutBindings[attrs.layout].compactLinkMidY(d, attrs)
+                  } :
+                  {
+                      x: attrs.layoutBindings[attrs.layout].linkX(d),
+                      y: attrs.layoutBindings[attrs.layout].linkY(d)
+                  };
+
+              const p = {
+                  x: attrs.layoutBindings[attrs.layout].linkParentX(d),
+                  y: attrs.layoutBindings[attrs.layout].linkParentY(d),
+              };
+
+              const m = attrs.compact && d.flexCompactDim ? {
+                  x: attrs.layoutBindings[attrs.layout].linkCompactXStart(d),
+                  y: attrs.layoutBindings[attrs.layout].linkCompactYStart(d),
+              } : n;
+              return attrs.layoutBindings[attrs.layout].diagonal(n, p, m, { sy: attrs.linkYOffset });
+          });
+
+      // Remove any  links which is exiting after animation
+      const linkExit = linkSelection
+          .exit()
+          .transition()
+          .duration(attrs.duration)
+          .attr("d", (d) => {
+              const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x, y, width, height });
+              const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x, y, width, height });
+              const o = { x: xo, y: yo };
+              return attrs.layoutBindings[attrs.layout].diagonal(o, o, null, { sy: attrs.linkYOffset });
+          })
+          .remove();
+
+
+      // --------------------------  CONNECTIONS ----------------------
+
+      const connectionsSel = attrs.connectionsWrapper
+          .selectAll("path.connection")
+          .data(visibleConnections)
+
+      // Enter any new connections at the parent's previous position.
+      const connEnter = connectionsSel
+          .enter()
+          .insert("path", "g")
+          .attr("class", "connection")
+          .attr("d", (d) => {
+              const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x: x0, y: y0, width, height });
+              const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x: x0, y: y0, width, height });
+              const o = { x: xo, y: yo };
+              return attrs.layoutBindings[attrs.layout].diagonal(o, o, null, { sy: attrs.linkYOffset });
+          });
+
+
+      // Get connections update selection
+      const connUpdate = connEnter.merge(connectionsSel);
+
+      // Styling connections
+      connUpdate.attr("fill", "none")
+
+      // Transition back to the parent element position
+      connUpdate
+          .transition()
+          .duration(attrs.duration)
+          .attr('d', (d) => {
+              const xs = attrs.layoutBindings[attrs.layout].linkX({ x: d._source.x, y: d._source.y, width: d._source.width, height: d._source.height });
+              const ys = attrs.layoutBindings[attrs.layout].linkY({ x: d._source.x, y: d._source.y, width: d._source.width, height: d._source.height });
+              const xt = attrs.layoutBindings[attrs.layout].linkJoinX({ x: d._target.x, y: d._target.y, width: d._target.width, height: d._target.height });
+              const yt = attrs.layoutBindings[attrs.layout].linkJoinY({ x: d._target.x, y: d._target.y, width: d._target.width, height: d._target.height });
+              return attrs.linkGroupArc({ source: { x: xs, y: ys }, target: { x: xt, y: yt } })
+          })
+
+      // Allow external modifications
+      connUpdate.each(attrs.connectionsUpdate);
+
+      // Remove any  links which is exiting after animation
+      const connExit = connectionsSel
+          .exit()
+          .transition()
+          .duration(attrs.duration)
+          .attr('opacity', 0)
+          .remove();
+
+      // --------------------------  NODES ----------------------
+      // Get nodes selection
+      const nodesSelection = attrs.nodesWrapper
+          .selectAll("g.node")
+          .data(nodes, ({ data }) => attrs.nodeId(data));
+
+      // Enter any new nodes at the parent's previous position.
+      const nodeEnter = nodesSelection
+          .enter()
+          .append("g")
+          .attr("class", "node")
+          .attr("transform", (d) => {
+              if (d == attrs.root) return `translate(${x0},${y0})`
+              const xj = attrs.layoutBindings[attrs.layout].nodeJoinX({ x: x0, y: y0, width, height });
+              const yj = attrs.layoutBindings[attrs.layout].nodeJoinY({ x: x0, y: y0, width, height });
+              return `translate(${xj},${yj})`
+          })
+          .attr("cursor", "pointer")
+          .on("click.node", (event, node) => {
+              const { data } = node;
+              if ([...event.srcElement.classList].includes("node-button-foreign-object")) {
+                  return;
+              }
+              if ([...event.srcElement.classList].includes("paging-button-wrapper")) {
+                  this.loadPagingNodes(node);
+                  return;
+              }
+              if (!data._pagingButton) {
+                  attrs.onNodeClick(node);
+                  return;
+              }
+              console.log('event fired, no handlers')
+          })
+          //  Event handler to the expand button
+          .on("keydown.node", (event, node) => {
+              const { data } = node;
+              if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                  if ([...event.srcElement.classList].includes("node-button-foreign-object")) {
+                      return;
+                  }
+                  if ([...event.srcElement.classList].includes("paging-button-wrapper")) {
+                      this.loadPagingNodes(node);
+                      return;
+                  }
+                  if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                      this.onButtonClick(event, node)
+                  }
+              }
+          });
+      nodeEnter.each(attrs.nodeEnter)
+
+      // Add background rectangle for the nodes
+      nodeEnter
+          .patternify({
+              tag: "rect",
+              selector: "node-rect",
+              data: (d) => [d]
+          })
+
+      // Node update styles
+      const nodeUpdate = nodeEnter
+          .merge(nodesSelection)
+          .style("font", "12px sans-serif");
+
+      // Add foreignObject element inside rectangle
+      const fo = nodeUpdate.patternify({
+          tag: "foreignObject",
+          selector: "node-foreign-object",
+          data: (d) => [d]
+      })
+          .style('overflow', 'visible')
+
+      // Add foreign object
+      fo.patternify({
+          tag: "xhtml:div",
+          selector: "node-foreign-object-div",
+          data: (d) => [d]
+      })
+
+      this.restyleForeignObjectElements();
+
+      // Add Node button circle's group (expand-collapse button)
+      const nodeButtonGroups = nodeEnter
+          .patternify({
+              tag: "g",
+              selector: "node-button-g",
+              data: (d) => [d]
+          })
+          .on("click", (event, d) => this.onButtonClick(event, d))
+          .on("keydown", (event, d) => {
+              if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                  this.onButtonClick(event, d)
+              }
+          });
+
+      nodeButtonGroups.patternify({
+          tag: 'rect',
+          selector: 'node-button-rect',
+          data: (d) => [d]
+      })
+          .attr('opacity', 0)
+          .attr('pointer-events', 'all')
+          .attr('width', d => attrs.nodeButtonWidth(d))
+          .attr('height', d => attrs.nodeButtonHeight(d))
+          .attr('x', d => attrs.nodeButtonX(d))
+          .attr('y', d => attrs.nodeButtonY(d))
+
+      // Add expand collapse button content
+      const nodeFo = nodeButtonGroups
+          .patternify({
+              tag: "foreignObject",
+              selector: "node-button-foreign-object",
+              data: (d) => [d]
+          })
+          .attr('width', d => attrs.nodeButtonWidth(d))
+          .attr('height', d => attrs.nodeButtonHeight(d))
+          .attr('x', d => attrs.nodeButtonX(d))
+          .attr('y', d => attrs.nodeButtonY(d))
+          .style('overflow', 'visible')
+          .patternify({
+              tag: "xhtml:div",
+              selector: "node-button-div",
+              data: (d) => [d]
+          })
+          .style('pointer-events', 'none')
+          .style('display', 'flex')
+          .style('width', '100%')
+          .style('height', '100%')
+
+
+
+      // Transition to the proper position for the node
+      nodeUpdate
+          .transition()
+          .attr("opacity", 0)
+          .duration(attrs.duration)
+          .attr("transform", ({ x, y, width, height }) => {
+              return attrs.layoutBindings[attrs.layout].nodeUpdateTransform({ x, y, width, height });
+
+          })
+          .attr("opacity", 1);
+
+      // Style node rectangles
+      nodeUpdate
+          .select(".node-rect")
+          .attr("width", ({ width }) => width)
+          .attr("height", ({ height }) => height)
+          .attr("x", ({ width }) => 0)
+          .attr("y", ({ height }) => 0)
+          .attr("cursor", "pointer")
+          .attr('rx', 3)
+          .attr("fill", attrs.nodeDefaultBackground)
+
+
+      nodeUpdate.select(".node-button-g").attr("transform", ({ data, width, height }) => {
+          const x = attrs.layoutBindings[attrs.layout].buttonX({ width, height });
+          const y = attrs.layoutBindings[attrs.layout].buttonY({ width, height });
+          return `translate(${x},${y})`
+      })
+          .attr("display", ({ data }) => {
+              return data._directSubordinates > 0 ? null : 'none';
+          })
+          .attr("opacity", ({ data, children, _children }) => {
+              if (data._pagingButton) {
+                  return 0;
+              }
+              if (children || _children) {
+                  return 1;
+              }
+              return 0;
+          });
+
+      // Restyle node button circle
+      nodeUpdate
+          .select(".node-button-foreign-object .node-button-div")
+          .html((node) => {
+              return attrs.buttonContent({ node, state: attrs })
+          })
+
+      // Restyle button texts
+      nodeUpdate
+          .select(".node-button-text")
+          .attr("text-anchor", "middle")
+          .attr("alignment-baseline", "middle")
+          .attr("font-size", ({ children }) => {
+              if (children) return 40;
+              return 26;
+          })
+          .text(({ children }) => {
+              if (children) return "-";
+              return "+";
+          })
+          .attr("y", this.isEdge() ? 10 : 0);
+
+      nodeUpdate.each(attrs.nodeUpdate)
+
+      // Remove any exiting nodes after transition
+      const nodeExitTransition = nodesSelection
+          .exit()
+      nodeExitTransition.each(attrs.nodeExit)
+
+      const maxDepthNode = nodeExitTransition.data().reduce((a, b) => a.depth < b.depth ? a : b, { depth: Infinity });
+
+      nodeExitTransition.attr("opacity", 1)
+          .transition()
+          .duration(attrs.duration)
+          .attr("transform", (d) => {
+
+              let { x, y, width, height } = maxDepthNode.parent || {};
+              const ex = attrs.layoutBindings[attrs.layout].nodeJoinX({ x, y, width, height });
+              const ey = attrs.layoutBindings[attrs.layout].nodeJoinY({ x, y, width, height });
+              return `translate(${ex},${ey})`
+          })
+          .on("end", function () {
+              d3.select(this).remove();
+          })
+          .attr("opacity", 0);
+
+      // Store the old positions for transition.
+      nodes.forEach((d) => {
+          d.x0 = d.x;
+          d.y0 = d.y;
+      });
+
+      // CHECK FOR CENTERING
+      const centeredNode = attrs.allNodes.filter(d => d.data._centered)[0]
+      if (centeredNode) {
+          let centeredNodes = [centeredNode]
+          if (centeredNode.data._centeredWithDescendants) {
+              if (attrs.compact) {
+                  centeredNodes = centeredNode.descendants().filter((d, i) => i < 7);
+              } else {
+                  centeredNodes = centeredNode.descendants().filter((d, i, arr) => {
+                      const h = Math.round(arr.length / 2);
+                      const spread = 2;
+                      if (arr.length % 2) {
+                          return i > h - spread && i < h + spread - 1;
+                      }
+
+                      return i > h - spread && i < h + spread;
+                  });
+              }
+
+          }
+          centeredNode.data._centeredWithDescendants = null;
+          centeredNode.data._centered = null;
+          this.fit({
+              animate: true,
+              scale: false,
+              nodes: centeredNodes
+          })
+      }
+
+    }*/
+
+    
+
+
+
+    
+    
+    let nodeData;
+    let nodeNewX;
+    let newX;
+    console.log('original node', node_main);
+    if (String(parameter) === "dragevent"){
+      nodeData = data.find(x => String(x.id) === String(node_main.subject.id)); // Find the dropped node's data
+      nodeNewX = node_main.x;
+      node = node_main.subject;
+    }
+    console.log('expanded newx1', nodeNewX);
+    
+    if (nodeData) {
+      let tempDic = {};
+
+      //work on drop & expand
+      layout.top.linkJoinX = function(d) {
+        //console.log("linkJoinX", d, nodeNewX);
+        return nodeNewX;
+      };
+      layout.top.linkJoinY = function(d) {
+        //console.log("linkJoinY", d);
+        return d.y + d.height; // Default behavior
+      };
+
+      //work on drop & expand
+      layout.top.linkParentX = function(d) {
+        //console.log("linkParentX", d);
+        if (d.x === node.x && d.y === node.y) {
+            return node.parent.x;
+        } else {
+            return d.parent.x; // Default behavior
+        }
+      };
+      layout.top.linkParentY = function(d) {
+        //console.log("linkParentY", d);
+        if (d.x === node.x && d.y === node.y) {
+            return node.parent.y + node.parent.height;
+        } else {
+            return d.parent.y + d.parent.height; // Default behavior
+        }
+      };
+
+      //work on drop & expand
+      layout.top.linkCompactXStart = function(d) {
+        //console.log("linkCompactXStart", d);
+        if(d.data.id === node.data.id){
+          //console.log('linkCompactXStart if', nodeNewX + (node.compactEven ? node.width / 2 : -node.width / 2))
+          return nodeNewX + (node.compactEven ? node.width / 2 : -node.width / 2);
+        }
+        else{
+          for (const [id, savedData] of Object.entries(tempNodeSave)) {
+            if (savedData.x === d.x && savedData.y === d.y) {
+              //console.log('linkCompactXStart loop', savedData.newX + (node.compactEven ? node.width / 2 : -node.width / 2))
+              return savedData.newX + (d.compactEven ? d.width / 2 : -d.width / 2);
+            }
+          }
+          //console.log('linkCompactXStart else', d.x + (node.compactEven ? node.width / 2 : -node.width / 2))
+          return d.x + (d.compactEven ? d.width / 2 : -d.width / 2);
+        }
+      };
+      layout.top.linkCompactYStart = function(d) {
+        //console.log("linkCompactYStart", d);
+        if (d.x === node.x && d.y === node.y) {
+            return d.y + node.height / 2;
+        } else {
+          
+          return d.y + d.height / 2; // Default behavior
+        }
+      };
+
+      //work on drop & expand
+      layout.top.linkX = function(d) {
+        //console.log("linkX", d);
+        return node.x;
+      };
+      layout.top.linkY = function(d) {
+        //console.log('linkY', d);
+        return d.y;
+      };
+
+      // work on expand
+      layout.top.nodeJoinX = function(d) {
+        //console.log("nodeJoinX", d);
+        return nodeNewX - node.width / 2;
+
+      };
+      layout.top.nodeJoinY = function(d) {
+        //console.log("nodeJoinY", d);
+        return d.y + d.height;
+      };
+      // work on expand
+      layout.top.nodeLeftX = function(d) {
+        //console.log("nodeLeftX", d);
+        return -d.width/2;
+      };
+      layout.top.nodeRightX = function(d) {
+        //console.log("nodeRightX", d);
+        return d.width/2;
+      };
+      // work on expand
+      layout.top.nodeTopY = function(d) {
+        //console.log("nodeTopY", d);
+        return 0;
+      };
+      layout.top.nodeBottomY = function(d) {
+        //console.log("nodeBottomY", d);
+        return d.height;
+      };
+      //work on drop & expand
+      layout.top.compactLinkMidX = function(d, state) {
+        //console.log("compactLinkMidX", d, state);
+        //console.log(d.firstCompactNode.x + d.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(d) / 4);
+        return d.firstCompactNode.x + d.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(d) / 4;
+      };
+      layout.top.compactLinkMidY = function(d) {
+        //console.log("compactLinkMidY", d);
+        //console.log(d.firstCompactNode.y);
+        return d.firstCompactNode.y;
+      };
+
+      //work on drop & expand
+      layout.top.nodeUpdateTransform = function(d) {
+        //console.log("nodeUpdateTransform", d);
+        const tolerance = 15;  // Define a small tolerance value
+        // Check if d.x and node.subject.x are close enough
+        if (Math.abs(d.x - node.x) <= tolerance && d.y === node.y) {
+          if (d.x >= 0) {
+            // For positive d.x
+            newX = nodeNewX - d.x;
+          } else {
+            // For negative d.x
+            newX = nodeNewX - Math.abs(d.x);
+          }
+          if (tempNodeSave[node.id]){
+            if (d.x >= 0) {
+              // For positive d.x
+              newX = tempNodeSave[node.id].newX + newX;
+            }
+          }
+          tempNodeSave[node.id] = {
+            parentId: node.parent.data.id,
+            id:node.id,
+            x: d.x,
+            y: node.y,
+            width: '222',
+            newX: newX,
+            nodeSelf: d,
+          };
+          return `translate(${newX },${d.y})`;
+        } else {
+          // Retrieve and work with previously stored data
+          for (const [id, savedData] of Object.entries(tempNodeSave)) {
+            if (savedData.x === d.x && savedData.y === d.y) {
+              return `translate(${savedData.newX}, ${d.y})`;
+            }
+          }
+          return `translate(${d.x - node.width / 2}, ${d.y})`;
+        }
+      };
+
+      
+
+      //work on drop & expand
+      /*layout.top.buttonX = function(d) {
+        console.log("buttonX", d);
+        if (d.x === node.x && d.y === node.y) {
+            return d.y; // Adjust as needed for specific cases
+        } else {
+            return d.y; // Default behavior
+        }
+      };
+      layout.top.buttonY = function(d) {
+        console.log("buttonY", d);
+        if (d.x === node.x && d.y === node.y) {
+            return d.y; // Adjust as needed for specific cases
+        } else {
+            return d.y; // Default behavior
+        }
+      };*/
+      
+
+      chart.layoutBindings(layout);
+      chart.render();
+    } 
+    
+  }
+  
+  function updateChildrenPosition(parentNode, parentX) {
+    console.log('Updating parentNode:', parentNode);
+    const layout = chart.layoutBindings();
+    const data = chart.getChartState().data;
+
+    const parentNodeData = data.find(x => String(x.id) === String(parentNode.data.id));
+
+    if (parentNodeData) {
+        console.log('Parent Node ID:', parentNode.data.id);
+
+  
+        layout.top.nodeUpdateTransform = function(d) {
+          if (d.x === parentNode.x && d.y === parentNode.y) {
+              console.log("nodeUpdateTransform matched", parentNode.data.id, "parentNode x", parentNode.x, "d.x ", d.x);
+              const newX = parentX - parentNode.x;
+              console.log('newX', newX);
+              d.x = newX;
+              console.log('newX - d.width / 2', newX - d.width / 2);
+              return `translate(${newX - d.width / 2},${d.y})`;
+          } else {
+              return `translate(${d.x - d.width / 2}, ${d.y})`;
+          }
+        };
+
+        chart.layoutBindings(layout);
+        chart.render();
+    } else {
+        console.error('No matching parentNodeData found in chart state data.');
+    }
   }
 
   function enableDrag() {
@@ -653,6 +1498,7 @@
   function expand(d) {
     d._expanded = true;
   }
+
   function collapse(d) {
     d._expanded = false;
   }
@@ -732,29 +1578,21 @@
     if (selectedNodeIds.length === 0) return;  // If no nodes are selected, do nothing
 
     const data = chart.getChartState().data;
-    console.log("Original Data:", data);
-
     // Ensure all IDs are compared as strings
     const updatedData = data.filter(node => {
-        console.log((node.id));
         if (node.parentId === null){
           return true;
         }
         const shouldRemove = selectedNodeIds.includes(String(node.id));
-        console.log(`Checking node with ID ${node.id}: shouldRemove = ${shouldRemove}`);
-        
         return !shouldRemove;
     });
-
-    console.log("Updated Data after filter:", updatedData);
-
     if (updatedData.length !== data.length) {
       chart.data(updatedData).render();  // Re-render the chart
       selectedNodeIds = [];  // Reset the selected node IDs
-      console.log("Nodes have been removed and the chart has been re-rendered.");
     } else {
       console.log("No nodes were removed.");
     }
+    chart.render();
   }
 
 </script>
@@ -763,7 +1601,6 @@
 
 <!--
   This is the code which is used to show of feature , other parts of the code are part of the boilerplate
-
 -->
 <div class="sidebar sidebar-fixed border-end" id="sidebar">
     <div class="sidebar-header border-bottom">
@@ -775,7 +1612,7 @@
         <use xlink:href="assets/brand/coreui.svg#signet"></use>
         </svg>
     </div>
-    <button class="btn-close d-lg-none" type="button" aria-label="Close" ></button>
+    <button class="btn-close d-lg-none"  type="button" aria-label="Close" ></button>
     </div>
     <div class="pt-3 pl-3 pr-3">
       <input type="text" id="searchInput" class="form-control"  placeholder="Search components...">
@@ -869,10 +1706,11 @@
 <div class="wrapper d-flex flex-column min-vh-100" style="height:100%;">
     <header class="header header-sticky p-0">
         <div class="container-fluid px-4 border-bottom">
-            <button class="header-toggler" type="button" id="sidebarToggleBtn" style="margin-inline-start: -14px">
-            <svg class="icon icon-lg">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-menu"></use>
-            </svg>
+            
+            <button class="header-toggler" id="sidebarToggleBtn" type="button" style="margin-inline-start: -14px">
+              <svg class="icon icon-lg" id="sidebarToggleIcon">
+                  <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg' %}#cil-menu"></use>
+              </svg>
             </button>
             
             <ul class="header-nav ms-auto ms-md-0">
@@ -1033,6 +1871,20 @@
     
 </div>
 
+<script>
+  document.getElementById("sidebarToggleBtn").addEventListener("click", function() {
+    var sidebar = document.getElementById("sidebar");
+
+    // Toggle the 'd-none' class on the sidebar
+
+    // You could also add logic to change the button's appearance, e.g., changing the icon
+    if (sidebar.classList.contains("hide")) {
+      sidebar.classList.remove("hide");
+    } else {
+      sidebar.classList.add("hide");
+    }
+  });
+</script>
 
 <script>
     var index = 0;
@@ -1068,8 +1920,7 @@
 <script src="vendors/simplebar/js/simplebar.min.js"></script>
 <script src="vendors/i18next/js/i18next.min.js"></script>
 <script src="vendors/i18next-http-backend/js/i18nextHttpBackend.js"></script>
-<script src="vendors/i18next-browser-languagedetector/js/i18nextBrowserLanguageDetector.js"></script>
-<script src="js/i18next.js"></script>
+
 <script>
   const header = document.querySelector('header.header');
 
@@ -1128,18 +1979,4 @@
   });
 
 
-</script>
-<script>
-  document.getElementById("sidebarToggleBtn").addEventListener("click", function() {
-    var sidebar = document.getElementById("sidebar");
-
-    // Toggle the 'd-none' class on the sidebar
-
-    // You could also add logic to change the button's appearance, e.g., changing the icon
-    if (sidebar.classList.contains("hide")) {
-      sidebar.classList.remove("hide");
-    } else {
-      sidebar.classList.add("hide");
-    }
-  });
 </script>
