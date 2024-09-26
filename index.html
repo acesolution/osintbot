@@ -274,7 +274,6 @@
         );
       })
       .nodeUpdate(function (d) {
-        console.log('node update d', d);
         if (d.id === '120' || d.id === '124') {
           d3.select(this).classed('droppable', false);
         } else {
@@ -544,73 +543,24 @@
   
   let tempNodeSave = {};
   let tempNodeChildSave = {};
-
-  function updatePathBasedOnExpend(node){
-    console.log('node1', node);
-    const layout = chart.layoutBindings(); // Current layout bindings
-    const data = chart.getChartState().data;
-    const nodeData = data.find(x => String(x.id) === String(node.id));
-    console.log('tempNodeSave', tempNodeSave);
-    if (nodeData) {
-    console.log('nodeData', nodeData);
-    console.log('layout', layout);
-
-      let tempDic = {};
-      // Update for 'top' binding
-      layout.top.nodeUpdateTransform = function(d) {
-        console.log('d', d);
-        const tolerance = 15;  // Define a small tolerance value
-        // Check if d.x and node.subject.x are close enough
-        if (Math.abs(d.x - node.x) <= tolerance && d.y === node.y) {
-          let newX;
-          if (d.x >= 0) {
-            // For positive d.x
-            newX = node.x - d.x;
-          } else {
-            // For negative d.x
-            newX = node.x - Math.abs(d.x);
-          }
-          if (tempNodeSave[node.id]){
-            if (d.x >= 0) {
-              // For positive d.x
-              newX = tempNodeSave[node.id].newX + newX;
-            }
-          }
-          tempNodeSave[node.id] = {
-            parentId: node.parent.data.id,
-            x: d.x,
-            y: node.y,
-            width: '222',
-            newX: newX,
-            nodeSelf: d,
-          };
-          return `translate(${newX },${d.y})`;
-        } else {
-          // Retrieve and work with previously stored data
-          for (const [id, savedData] of Object.entries(tempNodeSave)) {
-            if (savedData.x === d.x && savedData.y === d.y) {
-              console.log('1');
-              return `translate(${savedData.newX}, ${d.y})`;
-            }
-          }
-          return `translate(${d.x - node.subject.width / 2}, ${d.y})`;
-        }
-      };
-    }
-  }
-
+  let chlidInfoNode = {};
   function updatePathBasedOnDrop(node_main, parameter) {
     const layout = chart.layoutBindings(); // Current layout bindings
     const data = chart.getChartState().data;
-  
-    chart.calculateCompactFlexPositions = function (root) {
+    console.log('main node', node_main);
+    function calculateCompactFlexPositions (root) {
       const attrs = chart.getChartState();
       root.eachBefore(node => {
         if (node.children) {
           const compactChildren = node.children.filter(d => d.flexCompactDim);
           const fch = compactChildren[0];
           
-          if (!fch) return;
+          if (!fch){ 
+            console.log('fch', fch);
+            return
+          }else{
+            console.log('else fch', fch);
+          }
           console.log('returned');
           // Adjust x positions of compact children
           compactChildren.forEach((child, i, arr) => {
@@ -661,11 +611,12 @@
             
             if(child.id === node_main.subject.id){
               child.x = node_main.x;
+              child.y = node_main.y;
               tempNodeChildSave[child.id] = {
                 parentId: child.parent.id,
                 id:child.id,
                 x: node_main.x,
-                y: child.y,
+                y: node_main.y,
                 width: '222',
                 nodeSelf: child,
               };
@@ -675,35 +626,297 @@
                 if (savedData.id === child.id) {
                   //console.log('linkCompactXStart loop', savedData.newX + (node.compactEven ? node.width / 2 : -node.width / 2))
                   child.x = savedData.x;
+                  child.y = savedData.y;
                   
                 }
               }
-            }
-            // Example logic - customize as needed
-            if (child.someCustomCondition) {
-              
-              // Adjust child's x and y based on your own rules
-              child.x += 10; // Example adjustment
-              child.y -= 5;  // Example adjustment
             }
           });
         }
       });
     };  
+
+    function restyleForeignObjectElements() {
+      const attrs = this.getChartState();
+
+      attrs.svg
+          .selectAll(".node-foreign-object")
+          .attr("width", ({ width }) => width)
+          .attr("height", ({ height }) => height)
+          .attr("x", ({ width }) => 0)
+          .attr("y", ({ height }) => 0);
+      attrs.svg
+          .selectAll(".node-foreign-object-div")
+          .style("width", ({ width }) => `${width}px`)
+          .style("height", ({ height }) => `${height}px`)
+          .html(function (d, i, arr) {
+              if (d.data._pagingButton) {
+                  return `<div class="paging-button-wrapper"><div style="pointer-events:none">${attrs.pagingButton(d, i, arr, attrs)}</div></div>`;
+              }
+              return attrs.nodeContent.bind(this)(d, i, arr, attrs)
+          })
+    }
     
     /*chart.update = function({ x0, y0, x = 0, y = 0, width, height }) {
-      console.log('update called', x0, y0, x, y, width, height);
+      console.log('update called with:', { x0, y0, x, y, width, height });
+  
       const attrs = chart.getChartState();
+      const calc = attrs.calc;
+  
+      // Paging
+      if (attrs.compact) {
+          console.log('Compact layout detected');
+          this.calculateCompactFlexDimensions(attrs.root);
+      }
+  
+      //  Assigns the x and y position for the nodes
+      console.log('Calculating flex tree layout');
+      const treeData = attrs.flexTreeLayout(attrs.root);
+      // Ensure treeData has children
+      if (treeData['children'] && treeData['children'].length > 0) {
+        treeData['children'].forEach((child) => {
+            // Accessing data from child node's 'data' dictionary
+            const nodeId = child.data.id;
+            const nodeX = child.x;
+            const nodeY = child.y;
+            // Check if the child.id exists in tempNodeChildSave
+            if (tempNodeChildSave[child.data.id]) {
+              // Get predefined values for that child ID
+              const predefinedValues = tempNodeChildSave[child.data.id];
+
+              // Update the x and y values based on predefined values
+              console.log(`Before Update - Node ID: ${child.data.id}, X: ${child.x}, Y: ${child.y}`);
+
+              child.x = predefinedValues.x; // Update x
+              child.y = predefinedValues.y; // Update y
+
+              child._children
+
+              console.log(`After Update - Node ID: ${child.data.id}, New X: ${child.x}, New Y: ${child.y}`);
+            } else {
+                // No predefined values, leave the child unchanged
+                console.log(`No predefined values for Node ID: ${child.data.id}, Skipping Update.`);
+            }
+
+            // Optionally update the node ID or other properties if needed
+            // child.data.id = newId;
+
+        });
+      }
+      console.log('treeData:', treeData);
+  
+      if (attrs.compact) {
+        calculateCompactFlexPositions(attrs.root);
+      }
+  
+      const nodes = treeData.descendants();
+      //console.table(nodes.map(d => ({ x: d.x, y: d.y, width: d.width, height: d.height, flexCompactDim: d.flexCompactDim + "" })));
+  
+      // Get all links
+      const links = treeData.descendants().slice(1);
+      console.log('links:', links);
+  
+      nodes.forEach(attrs.layoutBindings[attrs.layout].swap);
+  
+      // Connections
+      const connections = attrs.connections;
+      const allNodesMap = {};
+      attrs.allNodes.forEach(d => allNodesMap[attrs.nodeId(d.data)] = d);
+  
+      const visibleNodesMap = {};
+      nodes.forEach(d => visibleNodesMap[attrs.nodeId(d.data)] = d);
+  
+      connections.forEach(connection => {
+          const source = allNodesMap[connection.from];
+          const target = allNodesMap[connection.to];
+          connection._source = source;
+          connection._target = target;
+      });
+  
+      const visibleConnections = connections.filter(d => visibleNodesMap[d.from] && visibleNodesMap[d.to]);
+      console.log('visibleConnections:', visibleConnections);
+  
+      const defsString = attrs.defs.bind(this)(attrs, visibleConnections);
+      const existingString = attrs.defsWrapper.html();
+      if (defsString !== existingString) {
+          attrs.defsWrapper.html(defsString);
+      }
+  
+      // -------------------------- LINKS ----------------------
+  
+      const linkSelection = attrs.linksWrapper
+          .selectAll("path.link")
+          .data(links, (d) => attrs.nodeId(d.data));
+  
+      const linkEnter = linkSelection
+          .enter()
+          .insert("path", "g")
+          .attr("class", "link")
+          .attr("d", (d) => {
+            console.log('link enter', x0, y0);
+            const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x: x0, y: y0, width, height });
+            const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x: x0, y: y0, width, height });
+            console.log('link enter', xo, yo);
+            const o = { x: xo, y: yo };
+            return attrs.layoutBindings[attrs.layout].diagonal(o, o, o);
+          });
+  
+      const linkUpdate = linkEnter.merge(linkSelection);
+  
+      linkUpdate.attr("fill", "none");
+  
+      if (this.isEdge()) {
+          linkUpdate.style('display', d => {
+              const display = d.data._pagingButton ? 'none' : 'auto';
+              return display;
+          });
+      } else {
+          linkUpdate.attr('display', d => {
+              const display = d.data._pagingButton ? 'none' : 'auto';
+              return display;
+          });
+      }
+  
+      linkUpdate.each(attrs.linkUpdate);
+  
+      linkUpdate.transition().duration(attrs.duration).attr("d", (d) => {
+        console.log('link update d', d);
+          const n = attrs.compact && d.flexCompactDim ? {
+              x: attrs.layoutBindings[attrs.layout].compactLinkMidX(d, attrs),
+              y: attrs.layoutBindings[attrs.layout].compactLinkMidY(d, attrs)
+          } : {
+              x: attrs.layoutBindings[attrs.layout].linkX(d),
+              y: attrs.layoutBindings[attrs.layout].linkY(d)
+          };
+  
+          const p = {
+              x: attrs.layoutBindings[attrs.layout].linkParentX(d),
+              y: attrs.layoutBindings[attrs.layout].linkParentY(d),
+          };
+  
+          const m = attrs.compact && d.flexCompactDim ? {
+              x: attrs.layoutBindings[attrs.layout].linkCompactXStart(d),
+              y: attrs.layoutBindings[attrs.layout].linkCompactYStart(d),
+          } : n;
+  
+          return attrs.layoutBindings[attrs.layout].diagonal(n, p, m, { sy: attrs.linkYOffset });
+      });
+  
+      linkSelection.exit().transition().duration(attrs.duration).attr("d", (d) => {
+          const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x, y, width, height });
+          const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x, y, width, height });
+          console.log('link selection', xo, yo);
+          const o = { x: xo, y: yo };
+          return attrs.layoutBindings[attrs.layout].diagonal(o, o, null, { sy: attrs.linkYOffset });
+      }).remove();
+  
+      // -------------------------- NODES ----------------------
+      const nodesSelection = attrs.nodesWrapper
+          .selectAll("g.node")
+          .data(nodes, ({ data }) => attrs.nodeId(data));
+  
+      const nodeEnter = nodesSelection.enter().append("g")
+          .attr("class", "node")
+          .attr("transform", (d) => {
+            if (x0 === undefined || y0 === undefined) {
+              console.log('x0 or y0 is undefined, setting to x and y.');
+              x0 = x; // Assign new x value
+              y0 = y; // Assign new y value
+            }
+            else{
+              console.log('also else');
+            }
+            console.log('New node position:', d, x0, y0);
+
+            if (d == attrs.root) return `translate(${x0},${y0})`;
+            const xj = attrs.layoutBindings[attrs.layout].nodeJoinX({ x: x0, y: y0, width, height });
+            const yj = attrs.layoutBindings[attrs.layout].nodeJoinY({ x: x0, y: y0, width, height });
+            return `translate(${xj},${yj})`;
+          })
+          .attr("cursor", "pointer")
+          .on("click.node", (event, node) => {
+              console.log('Node clicked:', node);
+          });
+  
+      const nodeUpdate = nodeEnter.merge(nodesSelection).style("font", "12px sans-serif");
+  
+      nodeUpdate.transition()
+          .duration(attrs.duration)
+          .attr("transform", ({ x, y, width, height }) => {
+              console.log('Node updated to:', { x, y, width, height });
+              return attrs.layoutBindings[attrs.layout].nodeUpdateTransform({ x, y, width, height });
+          });
+  
+      nodeUpdate.select(".node-button-g").attr("transform", ({ data, width, height }) => {
+          const x = attrs.layoutBindings[attrs.layout].buttonX({ width, height });
+          const y = attrs.layoutBindings[attrs.layout].buttonY({ width, height });
+          return `translate(${x},${y})`;
+      });
+  
+      nodeUpdate.select(".node-rect").attr("width", ({ width }) => width)
+          .attr("height", ({ height }) => height)
+          .attr("fill", attrs.nodeDefaultBackground);
+  
+      console.log('Update complete');
+    };*/
+
+    // Recursive function to traverse through children and update their x and y values
+    function updateChildCoordinates(node) {
+      // Check if the current node's ID exists in tempNodeChildSave
+      if (tempNodeChildSave[node.data.id]) {
+        // Get predefined values for that node ID
+        const predefinedValues = tempNodeChildSave[node.data.id];
+
+        // Update the x and y values based on predefined values
+        console.log(`Before Update - Node ID: ${node.data.id}, X: ${node.x}, Y: ${node.y}`);
+
+        node.x = predefinedValues.x; // Update x
+        node.y = predefinedValues.y; // Update y
+        node.x0 = predefinedValues.x; // Update x0
+        node.y0 = predefinedValues.y; // Update y0
+
+        console.log(`After Update - Node ID: ${node.data.id}, New X: ${node.x}, New Y: ${node.y}`);
+      }
+      if(node.data.id === node_main.subject.id){
+        node.x = node_main.x; // Update x
+        node.y = node_main.y; // Update y
+        node.x0 = node_main.x; // Update x0
+        node.y0 = node_main.y; // Update y0
+        tempNodeChildSave[node_main.subject.id] = {
+          parentId: node_main.subject.parent.id,
+          id:node_main.subject.id,
+          x: node_main.x,
+          y: node_main.y,
+          width: '222',
+          nodeSelf: node,
+        };
+      }
+
+      // If the node has children, recursively update them as well
+      if (node.children && node.children.length > 0) {
+          node.children.forEach(child => updateChildCoordinates(child)); // Recursion for each child
+      }
+    }
+
+    chart.update = function({ x0, y0, x = 0, y = 0, width, height }) {
+      console.log('update called with:', { x0, y0, x, y, width, height });
+      const attrs = this.getChartState();
       const calc = attrs.calc;
 
       // Paging
       if (attrs.compact) {
-        console.log('attrs.compact', attrs.compact)
-        this.calculateCompactFlexDimensions(attrs.root);
+          this.calculateCompactFlexDimensions(attrs.root);
       }
 
       //  Assigns the x and y position for the nodes
       const treeData = attrs.flexTreeLayout(attrs.root);
+
+      if (treeData['children'] && treeData['children'].length > 0) {
+        treeData['children'].forEach((child) => {
+          updateChildCoordinates(child);
+        });
+      }
+
       console.log('treeData', treeData);
       // Reassigns the x and y position for the based on the compact layout
       if (attrs.compact) {
@@ -711,7 +924,7 @@
       }
 
       const nodes = treeData.descendants();
-      console.log('nodes', nodes);
+
       // console.table(nodes.map(d => ({ x: d.x, y: d.y, width: d.width, height: d.height, flexCompactDim: d.flexCompactDim + "" })))
 
       // Get all links
@@ -1124,13 +1337,11 @@
           })
       }
 
-    }*/
+    }
 
-    
+  
 
-
-
-    
+  
     
     let nodeData;
     let nodeNewX;
@@ -1144,8 +1355,32 @@
     console.log('expanded newx1', nodeNewX);
     
     if (nodeData) {
+      /*
       let tempDic = {};
+      layout.top.nodeFlexSize = function({ height, width, siblingsMargin, childrenMargin, state, node, compactViewIndex }) {
+        console.log("nodeFlexSize", node.id, node.x);
+        let result = [];
+        if (state.compact && node.flexCompactDim) {
+          if(node.id === '101'){
+            result = [500, 400]
+          }
+          else{
+            result = [node.flexCompactDim[0], node.flexCompactDim[1]]
+          }
+          console.log('result', result);  
+          return result;
+        };
+        console.log('result2', [width + siblingsMargin, height + childrenMargin]);  
+        if(node.id === '101'){
+          return [800, 400];
+        }
+        else{
+          return [width + siblingsMargin, height + childrenMargin];
+        }
+        
+      };
 
+      
       //work on drop & expand
       layout.top.linkJoinX = function(d) {
         //console.log("linkJoinX", d, nodeNewX);
@@ -1204,8 +1439,8 @@
 
       //work on drop & expand
       layout.top.linkX = function(d) {
-        //console.log("linkX", d);
-        return node.x;
+        console.log("linkX", d, node.x);
+        return d.x;
       };
       layout.top.linkY = function(d) {
         //console.log('linkY', d);
@@ -1214,8 +1449,8 @@
 
       // work on expand
       layout.top.nodeJoinX = function(d) {
-        //console.log("nodeJoinX", d);
-        return nodeNewX - node.width / 2;
+        console.log("nodeJoinX", d, nodeNewX);
+        return node.x - node.width / 2;
 
       };
       layout.top.nodeJoinY = function(d) {
@@ -1224,11 +1459,11 @@
       };
       // work on expand
       layout.top.nodeLeftX = function(d) {
-        //console.log("nodeLeftX", d);
+        console.log("nodeLeftX", d, nodeNewX, -d.width/2);
         return -d.width/2;
       };
       layout.top.nodeRightX = function(d) {
-        //console.log("nodeRightX", d);
+        console.log("nodeRightX", d, nodeNewX, d.width/2);
         return d.width/2;
       };
       // work on expand
@@ -1310,44 +1545,13 @@
         } else {
             return d.y; // Default behavior
         }
-      };*/
+      };
       
 
-      chart.layoutBindings(layout);
+      chart.layoutBindings(layout);*/
       chart.render();
     } 
     
-  }
-  
-  function updateChildrenPosition(parentNode, parentX) {
-    console.log('Updating parentNode:', parentNode);
-    const layout = chart.layoutBindings();
-    const data = chart.getChartState().data;
-
-    const parentNodeData = data.find(x => String(x.id) === String(parentNode.data.id));
-
-    if (parentNodeData) {
-        console.log('Parent Node ID:', parentNode.data.id);
-
-  
-        layout.top.nodeUpdateTransform = function(d) {
-          if (d.x === parentNode.x && d.y === parentNode.y) {
-              console.log("nodeUpdateTransform matched", parentNode.data.id, "parentNode x", parentNode.x, "d.x ", d.x);
-              const newX = parentX - parentNode.x;
-              console.log('newX', newX);
-              d.x = newX;
-              console.log('newX - d.width / 2', newX - d.width / 2);
-              return `translate(${newX - d.width / 2},${d.y})`;
-          } else {
-              return `translate(${d.x - d.width / 2}, ${d.y})`;
-          }
-        };
-
-        chart.layoutBindings(layout);
-        chart.render();
-    } else {
-        console.error('No matching parentNodeData found in chart state data.');
-    }
   }
 
   function enableDrag() {
