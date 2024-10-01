@@ -1,3 +1,4 @@
+{% load static %}
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-org-chart@3.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3-flextree@2.1.2/build/d3-flextree.js"></script>
@@ -237,44 +238,44 @@
   ).then((data) => {
     const limitedData = data.slice(0, 20);
     // Define arrow marker for the end of the link (rightward direction)
-  const svg = d3.select("svg");  // Assuming there's an existing SVG element
-
-  svg.append("defs").append("marker")
-    .attr("id", "arrow-start")  // Rightward arrow marker
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 5)  // Position where the arrowhead connects to the path
-    .attr("refY", 0)
-    .attr("markerWidth", 2)
-    .attr("markerHeight", 2)
-    .attr("orient", "auto")  // Automatically orient the arrowhead
-    .append("path")
-    .attr("d", "M10,-5L0,0L10,5")  // Rightward arrowhead shape
-    .attr("fill", "#C0C0C0");  // Arrow color
-
-  // Define arrow marker for the leftward direction
-  svg.append("defs").append("marker")
-    .attr("id", "arrow-end")  // Leftward arrow marker
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 0)  // Left position for the arrow
-    .attr("refY", 0)
-    .attr("markerWidth", 2)
-    .attr("markerHeight", 2)
-    .attr("orient", "auto")  // Automatically orient the arrowhead
-    .append("path")
-    .attr("d", "M0,-5L10,0L0,5")  // Leftward arrowhead shape (same as right, but position changes)
-    .attr("fill", "#C0C0C0");  // Arrow color
+    /*const svg = d3.select("svg");  // Assuming there's an existing SVG element
 
     svg.append("defs").append("marker")
-  .attr("id", "arrow-down")  // Downward arrow marker
-  .attr("viewBox", "0 -10 10 10")  // Adjusted viewBox to fit the arrowhead
-  .attr("refX", 5)   // Center position for the arrowhead
-  .attr("refY", -25)   // Position where the arrowhead connects to the path
-  .attr("markerWidth", 3)
-  .attr("markerHeight", 3)
-  .attr("orient", "auto")  // Automatically orient the arrowhead
-  .append("path")
-  .attr("d", "M0,-10 L5,0 L10,-10 Z")  // Downward arrowhead shape
-  .attr("fill", "#C0C0C0");  // Arrow color
+      .attr("id", "arrow-start")  // Rightward arrow marker
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 5)  // Position where the arrowhead connects to the path
+      .attr("refY", 0)
+      .attr("markerWidth", 2)
+      .attr("markerHeight", 2)
+      .attr("orient", "auto")  // Automatically orient the arrowhead
+      .append("path")
+      .attr("d", "M10,-5L0,0L10,5")  // Rightward arrowhead shape
+      .attr("fill", "#E27396");  // Arrow color
+
+    // Define arrow marker for the leftward direction
+    svg.append("defs").append("marker")
+      .attr("id", "arrow-end")  // Leftward arrow marker
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 0)  // Left position for the arrow
+      .attr("refY", 0)
+      .attr("markerWidth", 2)
+      .attr("markerHeight", 2)
+      .attr("orient", "auto")  // Automatically orient the arrowhead
+      .append("path")
+      .attr("d", "M0,-5L10,0L0,5")  // Leftward arrowhead shape (same as right, but position changes)
+      .attr("fill", "#E27396");  // Arrow color
+
+      svg.append("defs").append("marker")
+    .attr("id", "arrow-down")  // Downward arrow marker
+    .attr("viewBox", "0 -10 10 10")  // Adjusted viewBox to fit the arrowhead
+    .attr("refX", 5)   // Center position for the arrowhead
+    .attr("refY", -25)   // Position where the arrowhead connects to the path
+    .attr("markerWidth", 3)
+    .attr("markerHeight", 3)
+    .attr("orient", "auto")  // Automatically orient the arrowhead
+    .append("path")
+    .attr("d", "M0,-10 L5,0 L10,-10 Z")  // Downward arrowhead shape
+    .attr("fill", "#E27396");  // Arrow color*/
 
 
     chart = new d3.OrgChart()
@@ -325,23 +326,11 @@
           d3.select(this).classed('draggable', true);
         }
       })
-      .onExpandOrCollapse(function (d) {
-        if(d.children){
-          chlidern = d.children[0];
-          console.log('chlidern.data._expanded', chlidern.data._expanded);
-          if (chlidern.data._expanded) {
-            console.log('node expended', d);
-            //updatePathBasedOnDrop(d, 'expension');
-            //updatePathBasedOnExpend(d);
-          } else {
-            console.log('Node is collapsed');
-          }
-        } else{
-          console.log('node is collapsed 2')
-        }
-      })
-      .linkUpdate(function (d, i, arr) {
-        console.log('d', d, i, arr);
+      .container('.chart-container')
+      .data(limitedData)
+      .render();
+      /*.linkUpdate(function (d, i, arr) {
+        //console.log('d', d, i, arr);
         let arrowStart =  "url(#arrow-start)";
         if (d.compactEven === null){
           arrowStart = "url(#arrow-down)";
@@ -353,10 +342,8 @@
           .attr('pointer-events', 'none')
           .attr("marker-start", arrowStart)
           .attr("marker-end", d => "url(#arrow-end)")
-      })
-      .container('.chart-container')
-      .data(limitedData)
-      .render();
+      })*/
+      
     // Add event listeners to list items after the DOM has loaded
     addDragEventListenersToFilterItems();
     addDropEventListenersToChart(); 
@@ -384,13 +371,16 @@
     chartContainer.addEventListener('drop', function (e) {
       e.preventDefault();
       const nodeName = e.dataTransfer.getData('text/plain');
+      // Capture the mouse position (drop position)
+      const dropX = e.clientX - chartContainer.getBoundingClientRect().left;
+      const dropY = e.clientY - chartContainer.getBoundingClientRect().top;
       if (nodeName) {
-        addNodeToChart(nodeName);
+        addNodeToChart(nodeName, dropX, dropY);
       }
     });
   }
   
-  function addNodeToChart(nodeName) {
+  function addNodeToChart(nodeName, dropX, dropY) {
      // Define a map to associate node names with icon classes
     const iconMap = {
         "Email": "https://cdn-icons-png.freepik.com/512/552/552486.png",
@@ -401,10 +391,9 @@
         "Medium": "fa fa-adjust",
         "Hard": "https://cdn-icons-png.freepik.com/512/9750/9750980.png"
     };
-
     let lastId = 0;
     const data = chart.getChartState().data;
-    console.log('chart.getChartState()', chart.getChartState());
+    //console.log('chart.getChartState()', chart.getChartState());
     // Find the highest existing numeric ID
     data.forEach(node => {
         const nodeId = parseInt(node.id, 10); // Parse the ID as an integer
@@ -417,33 +406,65 @@
     const newId = (lastId + 1);
     // Get the appropriate icon class based on the node name
     const iconClass = iconMap[nodeName] || "fa fa-question"; // Default to a question mark icon if no match is found
-    const newNode = {
+    
+    chart.addNode({
       id: newId,
       name: nodeName,
       position: "Newly Added",  // Customize this
       parentId: '100',  // Replace with actual parent ID or logic
       image: iconClass,
-    };
+      x: dropX,  // Store the drop X position
+      y: dropY   // Store the drop Y position
+    });
   
     // Update chart data
-    data.push(newNode);
-    const isEmpty = (obj) => Object.entries(obj).length === 0;
+    //data.push(newNode);
+    //chart.data(data).render();
+    let width =110; 
+    let height=222; 
+    let x = dropX;
+    let x0 = dropX;
+    let y = dropY;
+    let y0 = dropY;
+    //console.log('dropX', dropX, 'dropY', dropY);
+    const attrs = chart.getChartState();
+    zoomLevel = attrs.lastTransform.k;
+    // Get the position offsets caused by dragging the chart
+    const rootOffsetX = attrs.lastTransform.x;
+    const rootOffsetY = attrs.lastTransform.y;
 
-    if (!(isEmpty(tempNodeSave))){
-      chart.data(data).render();
-      const layout = chart.layoutBindings(); // Current layout bindings
-      layout.top.nodeUpdateTransform = function(d) {
-        
-      };
-      chart.layoutBindings(layout);
+    ////console.log(attrs.calc.centerY, attrs.calc.centerX, zoomLevel, rootOffsetX, rootOffsetY);
+    
+    // Adjust dropX and dropY to account for centerX, centerY, root offsets, and zoom
+    if(rootOffsetX > 0){
+      dropX = (dropX - attrs.calc.centerX + rootOffsetX) / zoomLevel;
     }else{
-    // Re-render the chart
-    chart.data(data).render();
+      dropX = (dropX - attrs.calc.centerX - rootOffsetX) / zoomLevel;
     }
+    //console.log('BeforedropY', dropY, zoomLevel);
+    if(zoomLevel <= 1 && zoomLevel >= 0.8){
+      dropY = dropY * zoomLevel;
+      //console.log('inIf', dropY);
+    }
+    else{
+      dropY = dropY
+      //console.log('inElse', dropY);
+    }
+    //console.log('AfterdropY', dropY);
+    attrs.allNodes = attrs.root.descendants();
+    attrs.allNodes.forEach(d => {
+      
+      if(d.id === String(newId)){
+        //console.log('matched');
+        updatePathBasedOnDrop(d, 'nodeEvent', dropX, dropY);
+      }
+    })
+
+    
     // Attach click event to the newly added node
     d3.selectAll('#node-container')
       .on('click', function(d) {
-          selectNode(`"${d.data.id}"`); // Pass the ID as a string
+        selectNode(`"${d.data.id}"`); // Pass the ID as a string
       });
   }
   
@@ -543,8 +564,8 @@
   }
 
   function onDragEnd(element, dragEvent) {
-    console.log('dragNode', dragNode);
-    console.log('dropNode', dropNode);
+    //console.log('dragNode', dragNode);
+    //console.log('dropNode', dropNode);
     
 
     document
@@ -552,19 +573,19 @@
       .classList.remove('dragging-active');
 
     if (!dragNode) {
-      console.log('dragnode');
+      //console.log('dragnode');
       return;
     }
 
     d3.select(element).classed('dragging', false);
 
     if (!dropNode) {
-      console.log('dropnode');
+      //console.log('dropnode');
       //chart.render();
       const data = chart.getChartState().data;
       const node = data.find((x) => String(x.id) === String(dragEvent.subject.id));
       if (node) {
-        updatePathBasedOnDrop(dragEvent, "dragevent"); // Pass the node itself
+        updatePathBasedOnDrop(dragEvent, "dragevent", 10,20); // Pass the node itself
       }
       return;
     }
@@ -596,10 +617,10 @@
   let tempNodeSave = {};
   let tempNodeChildSave = {};
   let chlidInfoNode = {};
-  function updatePathBasedOnDrop(node_main, parameter) {
+  function updatePathBasedOnDrop(node_main, parameter, dropX, dropY) {
     const layout = chart.layoutBindings(); // Current layout bindings
     const data = chart.getChartState().data;
-    console.log('main node', node_main);
+    //console.log('main node', node_main);
 
     function calculateCompactFlexPositions (root) {
       const attrs = chart.getChartState();
@@ -609,26 +630,26 @@
           const fch = compactChildren[0];
           
           if (!fch){ 
-            console.log('fch', fch);
+            //console.log('fch', fch);
             return
           }else{
-            console.log('else fch', fch);
+            //console.log('else fch', fch);
           }
-          console.log('returned');
+          //console.log('returned');
           // Adjust x positions of compact children
           compactChildren.forEach((child, i, arr) => {
             if (i == 0) {
               fch.x -= fch.flexCompactDim[0] / 2;
-              //console.log('fch.x', fch.x, child);
+              ////console.log('fch.x', fch.x, child);
             }
             if (i & i % 2 - 1) 
             {
               child.x = fch.x + fch.flexCompactDim[0] * 0.25 - attrs.compactMarginPair(child) / 4;
-              //console.log('child.x if', child.x, child);
+              ////console.log('child.x if', child.x, child);
             }
             else if (i) {
               child.x = fch.x + fch.flexCompactDim[0] * 0.75 + attrs.compactMarginPair(child) / 4;
-              //console.log('child.x else', child.x, child);
+              ////console.log('child.x else', child.x, child);
             }
 
           });
@@ -662,14 +683,14 @@
           // Example: Further adjust x/y based on additional conditions
           compactChildren.forEach((child) => {
             
-            if(child.id === node_main.subject.id){
-              child.x = node_main.x;
-              child.y = node_main.y;
+            if(child.id === node_secondry.id){
+              child.x = toAssignX;
+              child.y = toAssignY;
               tempNodeChildSave[child.id] = {
                 parentId: child.parent.id,
                 id:child.id,
-                x: node_main.x,
-                y: node_main.y,
+                x: toAssignX,
+                y: toAssignY,
                 width: '222',
                 nodeSelf: child,
               };
@@ -677,7 +698,7 @@
             else{
               for (const [id, savedData] of Object.entries(tempNodeChildSave)) {
                 if (savedData.id === child.id) {
-                  //console.log('linkCompactXStart loop', savedData.newX + (node.compactEven ? node.width / 2 : -node.width / 2))
+                  ////console.log('linkCompactXStart loop', savedData.newX + (node.compactEven ? node.width / 2 : -node.width / 2))
                   child.x = savedData.x;
                   child.y = savedData.y;
                   
@@ -718,24 +739,24 @@
         // Get predefined values for that node ID
         const predefinedValues = tempNodeChildSave[node.data.id];
         // Update the x and y values based on predefined values
-        console.log(`Before Update - Node ID: ${node.data.id}, X: ${node.x}, Y: ${node.y}`);
+        //console.log(`Before Update - Node ID: ${node.data.id}, X: ${node.x}, Y: ${node.y}`);
         node.x = predefinedValues.x; // Update x
         node.y = predefinedValues.y; // Update y
         node.x0 = predefinedValues.x; // Update x0
         node.y0 = predefinedValues.y; // Update y0
-        console.log(`After Update - Node ID: ${node.data.id}, New X: ${node.x}, New Y: ${node.y}`);
+        //console.log(`After Update - Node ID: ${node.data.id}, New X: ${node.x}, New Y: ${node.y}`);
 
       }
 
-      if(node.data.id === node_main.subject.id){
+      if(node.data.id === node_secondry.id){
         node.x = node_main.x; // Update x
         node.y = node_main.y; // Update y
         node.x0 = node_main.x; // Update x0
         node.y0 = node_main.y; // Update y0
 
-        tempNodeChildSave[node_main.subject.id] = {
-          parentId: node_main.subject.parent.id,
-          id:node_main.subject.id,
+        tempNodeChildSave[node_secondry.id] = {
+          parentId: node_secondry.parent.id,
+          id:node_secondry.id,
           x: node_main.x,
           y: node_main.y,
           width: '222',
@@ -749,9 +770,7 @@
           node.children.forEach(child => updateChildCoordinates(child)); // Recursion for each child
       }
     }
-    console.log('chart', chart);
-
-
+    
     chart.update = function({ x0, y0, x = 0, y = 0, width, height }) {
       const attrs = this.getChartState();
       const calc = attrs.calc;
@@ -764,7 +783,7 @@
       //  Assigns the x and y position for the nodes
       const treeData = attrs.flexTreeLayout(attrs.root);
       
-      if (treeData.id === node_main.subject.id) {
+      if (treeData.id === node_secondry.id) {
         treeData.x = node_main.x;    // Update x
         treeData.y = node_main.y;    // Update y
         treeData.x0 = node_main.x;   // Update x0
@@ -786,7 +805,7 @@
         });
       }
 
-      console.log('treeData', treeData);
+      //console.log('treeData', treeData);
       // Reassigns the x and y position for the based on the compact layout
       if (attrs.compact) {
         calculateCompactFlexPositions(attrs.root);
@@ -794,7 +813,7 @@
 
       const nodes = treeData.descendants();
 
-      // console.table(nodes.map(d => ({ x: d.x, y: d.y, width: d.width, height: d.height, flexCompactDim: d.flexCompactDim + "" })))
+      // //console.table(nodes.map(d => ({ x: d.x, y: d.y, width: d.width, height: d.height, flexCompactDim: d.flexCompactDim + "" })))
 
       // Get all links
       const links = treeData.descendants().slice(1);
@@ -984,7 +1003,7 @@
                   attrs.onNodeClick(node);
                   return;
               }
-              console.log('event fired, no handlers')
+              //console.log('event fired, no handlers')
           })
           //  Event handler to the expand button
           .on("keydown.node", (event, node) => {
@@ -1208,26 +1227,31 @@
 
     }
 
-  
-
-  
-    
     let nodeData;
-    let nodeNewX;
+    let toAssignX;
+    let toAssignY;
     let newX;
-    console.log('original node', node_main);
+    let node_secondry;
+    //console.log('original node', node_main);
     if (String(parameter) === "dragevent"){
       nodeData = data.find(x => String(x.id) === String(node_main.subject.id)); // Find the dropped node's data
-      nodeNewX = node_main.x;
-      node = node_main.subject;
+      toAssignX = node_main.x;
+      toAssignY = node_main.y;
+      node_secondry = node_main.subject;
     }
-    console.log('expanded newx1', nodeNewX);
+    else{
+      nodeData = data.find(x => String(x.id) === String(node_main.id)); // Find the dropped node's data
+      node_secondry = node_main;
+      toAssignX = dropX;
+      toAssignY = dropY;
+    }
+
     
     if (nodeData) {
       /*
       let tempDic = {};
       layout.top.nodeFlexSize = function({ height, width, siblingsMargin, childrenMargin, state, node, compactViewIndex }) {
-        console.log("nodeFlexSize", node.id, node.x);
+        //console.log("nodeFlexSize", node.id, node.x);
         let result = [];
         if (state.compact && node.flexCompactDim) {
           if(node.id === '101'){
@@ -1236,10 +1260,10 @@
           else{
             result = [node.flexCompactDim[0], node.flexCompactDim[1]]
           }
-          console.log('result', result);  
+          //console.log('result', result);  
           return result;
         };
-        console.log('result2', [width + siblingsMargin, height + childrenMargin]);  
+        //console.log('result2', [width + siblingsMargin, height + childrenMargin]);  
         if(node.id === '101'){
           return [800, 400];
         }
@@ -1247,118 +1271,147 @@
           return [width + siblingsMargin, height + childrenMargin];
         }
         
-      };
+      };*/
 
-      
-      //work on drop & expand
+      /*
+      //work on drop & expand (only showing parent details)
       layout.top.linkJoinX = function(d) {
         //console.log("linkJoinX", d, nodeNewX);
-        return nodeNewX;
+        return d.x;
       };
       layout.top.linkJoinY = function(d) {
         //console.log("linkJoinY", d);
         return d.y + d.height; // Default behavior
-      };
-
+      };*/
+      
       //work on drop & expand
       layout.top.linkParentX = function(d) {
-        //console.log("linkParentX", d);
-        if (d.x === node.x && d.y === node.y) {
-            return node.parent.x;
-        } else {
-            return d.parent.x; // Default behavior
-        }
+        ////console.log("linkParentX", d);
+        
+        return d.parent.x; // Default behavior
       };
       layout.top.linkParentY = function(d) {
         //console.log("linkParentY", d);
-        if (d.x === node.x && d.y === node.y) {
-            return node.parent.y + node.parent.height;
-        } else {
-            return d.parent.y + d.parent.height; // Default behavior
-        }
-      };
-
-      //work on drop & expand
-      layout.top.linkCompactXStart = function(d) {
-        //console.log("linkCompactXStart", d);
-        if(d.data.id === node.data.id){
-          //console.log('linkCompactXStart if', nodeNewX + (node.compactEven ? node.width / 2 : -node.width / 2))
-          return nodeNewX + (node.compactEven ? node.width / 2 : -node.width / 2);
-        }
-        else{
-          for (const [id, savedData] of Object.entries(tempNodeSave)) {
-            if (savedData.x === d.x && savedData.y === d.y) {
-              //console.log('linkCompactXStart loop', savedData.newX + (node.compactEven ? node.width / 2 : -node.width / 2))
-              return savedData.newX + (d.compactEven ? d.width / 2 : -d.width / 2);
-            }
+        if (node_secondry.parent && node_secondry.parent.y) {
+          // If the parent exists and has a valid 'y' property
+          if (node_secondry.parent.y > d.y) {
+              //console.log('matched');
+              return d.parent.y;  // Return the parent's 'y' value
           }
-          //console.log('linkCompactXStart else', d.x + (node.compactEven ? node.width / 2 : -node.width / 2))
-          return d.x + (d.compactEven ? d.width / 2 : -d.width / 2);
         }
+        return d.parent.y + d.parent.height; // Default behavior
+        
       };
-      layout.top.linkCompactYStart = function(d) {
-        //console.log("linkCompactYStart", d);
-        if (d.x === node.x && d.y === node.y) {
-            return d.y + node.height / 2;
-        } else {
-          
-          return d.y + d.height / 2; // Default behavior
-        }
-      };
-
       //work on drop & expand
       layout.top.linkX = function(d) {
-        console.log("linkX", d, node.x);
+        ////console.log("linkX", d, d.x);
         return d.x;
       };
       layout.top.linkY = function(d) {
-        //console.log('linkY', d);
+        //console.log('linkY', d, d.y, node_main.y, node_secondry.parent.y);
+        if(d.y <= node_secondry.parent.y && d.id === node_secondry.id){
+          //console.log('met');
+          return node_main.y + node_secondry.height;
+        }
         return d.y;
       };
 
+      /*
+      layout.top.compactLinkMidX = function(node, state) {
+        //console.log("compactLinkMidX", node, node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4);
+        if(node.id === node.parent.children[0].id){
+          //console.log('lol');
+          return node.parent.x;
+        }
+        return node.firstCompactNode.x + node.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(node) / 4;
+      };
+      layout.top.compactLinkMidY = function(node) {
+        //console.log("compactLinkMidY", node, node.firstCompactNode.y);
+        return node.firstCompactNode.y;
+      };
+      */
+      //work on drop & expand
+      
+      layout.top.linkCompactXStart = function(node) {
+        // Retrieve chart attributes and layout information
+        const attrs = chart.getChartState();
+    
+        // Get the CompactX value (middle point between siblings)
+        const CompactX = attrs.layoutBindings[attrs.layout].compactLinkMidX(node, attrs);
+    
+        // Check if the node has been dragged to the opposite side of CompactX
+        let finalCompact;
+        // If the node is on the left of CompactX but should connect to the right (based on compactEven)
+        if (CompactX < node.x && node.compactEven) {
+          finalCompact = -node.width / 2;  // Attach to the left side of the node
+        }
+        // If the node is on the right of CompactX but should connect to the left (based on compactEven)
+        else if (CompactX > node.x && !node.compactEven) {
+            finalCompact = node.width / 2;  // Attach to the right side of the node
+        } else {
+            // Otherwise, use the default logic (based on compactEven value)
+            finalCompact = node.compactEven ? node.width / 2 : -node.width / 2;
+        }
+        // Return the adjusted x position for the path attachment
+        return node.x + finalCompact;
+      };
+    
+      layout.top.linkCompactYStart = function(node) {
+        ////console.log("linkCompactYStart", node, node.y + node.height / 2);
+        return node.y + node.height / 2;
+      };
+
+      
+
       // work on expand
-      layout.top.nodeJoinX = function(d) {
-        console.log("nodeJoinX", d, nodeNewX);
+      /*layout.top.nodeJoinX = function(d) {
+        //console.log("nodeJoinX", d, node.x - node.width / 2);
         return node.x - node.width / 2;
 
       };
       layout.top.nodeJoinY = function(d) {
-        //console.log("nodeJoinY", d);
+        //console.log("nodeJoinY", d.y ,d.y + d.height);
+        if(node_main.y >= node_main.subject.parent.y){
+          //console.log('met');
+          return node_main.y + node_main.subject.height;
+        }
         return d.y + d.height;
-      };
+      };*/
+
+      /*
       // work on expand
       layout.top.nodeLeftX = function(d) {
-        console.log("nodeLeftX", d, nodeNewX, -d.width/2);
+        //console.log("nodeLeftX", d, nodeNewX, -d.width/2);
         return -d.width/2;
       };
       layout.top.nodeRightX = function(d) {
-        console.log("nodeRightX", d, nodeNewX, d.width/2);
+        //console.log("nodeRightX", d, nodeNewX, d.width/2);
         return d.width/2;
       };
       // work on expand
       layout.top.nodeTopY = function(d) {
-        //console.log("nodeTopY", d);
+        ////console.log("nodeTopY", d);
         return 0;
       };
       layout.top.nodeBottomY = function(d) {
-        //console.log("nodeBottomY", d);
+        ////console.log("nodeBottomY", d);
         return d.height;
-      };
+      };*/
       //work on drop & expand
       layout.top.compactLinkMidX = function(d, state) {
         //console.log("compactLinkMidX", d, state);
-        //console.log(d.firstCompactNode.x + d.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(d) / 4);
+        ////console.log(d.firstCompactNode.x + d.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(d) / 4);
         return d.firstCompactNode.x + d.firstCompactNode.flexCompactDim[0] / 4 + state.compactMarginPair(d) / 4;
       };
       layout.top.compactLinkMidY = function(d) {
-        //console.log("compactLinkMidY", d);
-        //console.log(d.firstCompactNode.y);
+        ////console.log("compactLinkMidY", d);
+        ////console.log(d.firstCompactNode.y);
         return d.firstCompactNode.y;
       };
-
+      /*
       //work on drop & expand
       layout.top.nodeUpdateTransform = function(d) {
-        //console.log("nodeUpdateTransform", d);
+        ////console.log("nodeUpdateTransform", d);
         const tolerance = 15;  // Define a small tolerance value
         // Check if d.x and node.subject.x are close enough
         if (Math.abs(d.x - node.x) <= tolerance && d.y === node.y) {
@@ -1400,7 +1453,7 @@
 
       //work on drop & expand
       /*layout.top.buttonX = function(d) {
-        console.log("buttonX", d);
+        //console.log("buttonX", d);
         if (d.x === node.x && d.y === node.y) {
             return d.y; // Adjust as needed for specific cases
         } else {
@@ -1408,7 +1461,7 @@
         }
       };
       layout.top.buttonY = function(d) {
-        console.log("buttonY", d);
+        //console.log("buttonY", d);
         if (d.x === node.x && d.y === node.y) {
             return d.y; // Adjust as needed for specific cases
         } else {
@@ -1589,7 +1642,7 @@
 
       // Get the border color of the selected node
       const borderColor = nodeElement.style('border-color');
-      // console.log(`Border color of node ${nodeId}:`, borderColor);
+      // //console.log(`Border color of node ${nodeId}:`, borderColor);
       if (index === -1) {
         // Node is not selected, so select it
         selectedNodeIds.push(nodeIdStr);
@@ -1599,12 +1652,12 @@
         selectedNodeIds.forEach(id => {
           const node = findNodeById(id, data);
           if (node) {
-            // console.log(node);
+            // //console.log(node);
             expand(node);
           }
         });
         chart.render();
-        //console.log("selectedNodeIds", selectedNodeIds);
+        ////console.log("selectedNodeIds", selectedNodeIds);
         // Highlight the selected node
         selectedNodeIds.forEach(id => {
           d3.selectAll('.content-container')
@@ -1616,7 +1669,7 @@
       } else {
         // Node is already selected, so deselect it
         selectedNodeIds.splice(index, 1);
-        //console.log("idsToRemove", idsToRemove);
+        ////console.log("idsToRemove", idsToRemove);
         // Collect all descendants recursively for deselection
         collectDescendants(nodeIdStr, data, idsToRemove);
         idsToRemove.forEach(id => {
@@ -1629,7 +1682,7 @@
         idsToRemove.forEach(id => {
           const node = findNodeById(id, data);
           if (node) {
-            // console.log(node);
+            // //console.log(node);
             collapse(node);
           }
         });
@@ -1663,7 +1716,7 @@
       chart.data(updatedData).render();  // Re-render the chart
       selectedNodeIds = [];  // Reset the selected node IDs
     } else {
-      console.log("No nodes were removed.");
+      //console.log("No nodes were removed.");
     }
     chart.render();
   }
