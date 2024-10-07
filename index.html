@@ -654,7 +654,7 @@
               console.log('toAssignX', toAssignX);
             }*/
             //console.log('child', child.id);
-            if(child.id === node_secondry.id){
+            /*if(child.id === node_secondry.id){
               //console.log('before',child.x);
               child.x = toAssignX;
               child.y = toAssignY;
@@ -677,7 +677,16 @@
                   
                 }
               }
-            }
+            }*/
+
+            compactChildren
+              .forEach((node, i) => {
+                  if (node.row) {
+                      node.y = fch.y + cumSum[node.row - 1]
+                  } else {
+                      node.y = fch.y;
+                  }
+              })
           });
         }
       });
@@ -2673,7 +2682,7 @@
         </li>
         <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
             <svg class="nav-icon">
-                <use xlink:href='vendors/@coreui/icons/svg/free.svg' %}#cil-notes"></use>
+                <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg' %}#cil-notes"></use>
                 </svg><span data-coreui-i18n="forms">Forms</span></a>
             <ul class="nav-group-items compact">
             <li class="nav-item"><a class="nav-link" href="forms/form-control.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Form Control</a></li>
@@ -2729,7 +2738,7 @@
             
             <button class="header-toggler" id="sidebarToggleBtn" type="button" style="margin-inline-start: -14px">
               <svg class="icon icon-lg" id="sidebarToggleIcon">
-                  <use xlink:href='vendors/@coreui/icons/svg/free.svg' %}#cil-menu"></use>
+                  <use xlink:href="{% static 'vendors/@coreui/icons/svg/free.svg' %}#cil-menu"></use>
               </svg>
             </button>
             
