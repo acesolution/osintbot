@@ -9,12 +9,12 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <!-- Vendors styles-->
-<link rel="stylesheet" href="vendors/simplebar/css/simplebar.css">
+<link rel="stylesheet" href="{% static "vendors/simplebar/css/simplebar.css" %}">
 <!-- Main styles for this application-->
-<link href="css/style.css" rel="stylesheet">
+<link href="{% static "css/style.css" %}" rel="stylesheet">
 <!-- We use those styles to show code examples, you should remove them in your application.-->
-<link href="css/examples.css" rel="stylesheet">
-<script src="js/config.js"></script>
+<link href="{% static "css/examples.css" %}" rel="stylesheet">
+<script src="{% static "js/config.js" %}"></script>
 
 <style type="text/css">
   .hide {
@@ -237,47 +237,6 @@
     'https://raw.githubusercontent.com/bumbeishvili/sample-data/main/data-oracle.csv'
   ).then((data) => {
     const limitedData = data.slice(0, 20);
-    // Define arrow marker for the end of the link (rightward direction)
-    /*const svg = d3.select("svg");  // Assuming there's an existing SVG element
-
-    svg.append("defs").append("marker")
-      .attr("id", "arrow-start")  // Rightward arrow marker
-      .attr("viewBox", "0 -5 10 10")
-      .attr("refX", 5)  // Position where the arrowhead connects to the path
-      .attr("refY", 0)
-      .attr("markerWidth", 2)
-      .attr("markerHeight", 2)
-      .attr("orient", "auto")  // Automatically orient the arrowhead
-      .append("path")
-      .attr("d", "M10,-5L0,0L10,5")  // Rightward arrowhead shape
-      .attr("fill", "#E27396");  // Arrow color
-
-    // Define arrow marker for the leftward direction
-    svg.append("defs").append("marker")
-      .attr("id", "arrow-end")  // Leftward arrow marker
-      .attr("viewBox", "0 -5 10 10")
-      .attr("refX", 0)  // Left position for the arrow
-      .attr("refY", 0)
-      .attr("markerWidth", 2)
-      .attr("markerHeight", 2)
-      .attr("orient", "auto")  // Automatically orient the arrowhead
-      .append("path")
-      .attr("d", "M0,-5L10,0L0,5")  // Leftward arrowhead shape (same as right, but position changes)
-      .attr("fill", "#E27396");  // Arrow color
-
-      svg.append("defs").append("marker")
-    .attr("id", "arrow-down")  // Downward arrow marker
-    .attr("viewBox", "0 -10 10 10")  // Adjusted viewBox to fit the arrowhead
-    .attr("refX", 5)   // Center position for the arrowhead
-    .attr("refY", -25)   // Position where the arrowhead connects to the path
-    .attr("markerWidth", 3)
-    .attr("markerHeight", 3)
-    .attr("orient", "auto")  // Automatically orient the arrowhead
-    .append("path")
-    .attr("d", "M0,-10 L5,0 L10,-10 Z")  // Downward arrowhead shape
-    .attr("fill", "#E27396");  // Arrow color*/
-
-
     chart = new d3.OrgChart()
       .nodeHeight((d) => 85 + 25)
       .nodeWidth((d) => 220 + 2)
@@ -444,13 +403,13 @@
     //console.log('BeforedropY', dropY, zoomLevel);
     if(zoomLevel <= 1 && zoomLevel >= 0.8){
       dropY = dropY * zoomLevel;
-      //console.log('inIf', dropY);
+      console.log('inIf', dropY);
     }
     else{
       dropY = dropY
-      //console.log('inElse', dropY);
+      console.log('inElse', dropY);
     }
-    //console.log('AfterdropY', dropY);
+    console.log('AfterdropY', dropY);
     attrs.allNodes = attrs.root.descendants();
     attrs.allNodes.forEach(d => {
       
@@ -617,6 +576,10 @@
   let tempNodeSave = {};
   let tempNodeChildSave = {};
   let chlidInfoNode = {};
+  let childCount = {};
+  let tempChildCount = {};
+  let checkExpandCollapse = {};
+
   function updatePathBasedOnDrop(node_main, parameter, dropX, dropY) {
     const layout = chart.layoutBindings(); // Current layout bindings
     const data = chart.getChartState().data;
@@ -638,18 +601,20 @@
           //console.log('returned');
           // Adjust x positions of compact children
           compactChildren.forEach((child, i, arr) => {
+
+            //console.log('compactChild', child, child.x, child.y, child.id);
             if (i == 0) {
               fch.x -= fch.flexCompactDim[0] / 2;
-              ////console.log('fch.x', fch.x, child);
+              //console.log('fch.x', fch.x, child.id);
             }
             if (i & i % 2 - 1) 
             {
               child.x = fch.x + fch.flexCompactDim[0] * 0.25 - attrs.compactMarginPair(child) / 4;
-              ////console.log('child.x if', child.x, child);
+              //console.log('child.x if', child.x, child.id);
             }
             else if (i) {
               child.x = fch.x + fch.flexCompactDim[0] * 0.75 + attrs.compactMarginPair(child) / 4;
-              ////console.log('child.x else', child.x, child);
+              //console.log('child.x else', child.x, child.id);
             }
 
           });
@@ -682,10 +647,18 @@
           // Add your custom coordinate adjustments here
           // Example: Further adjust x/y based on additional conditions
           compactChildren.forEach((child) => {
-            
+            //console.log('compact child 2', child, child.id, child.x, child.y );
+            // Adjust toAssignX if firstCompact is null
+            /*if (child.firstCompact === null) {
+              toAssignX += (toAssignX > 0) ? 30 : -30;
+              console.log('toAssignX', toAssignX);
+            }*/
+            //console.log('child', child.id);
             if(child.id === node_secondry.id){
+              //console.log('before',child.x);
               child.x = toAssignX;
               child.y = toAssignY;
+              //console.log('after',child.x);
               tempNodeChildSave[child.id] = {
                 parentId: child.parent.id,
                 id:child.id,
@@ -698,7 +671,7 @@
             else{
               for (const [id, savedData] of Object.entries(tempNodeChildSave)) {
                 if (savedData.id === child.id) {
-                  ////console.log('linkCompactXStart loop', savedData.newX + (node.compactEven ? node.width / 2 : -node.width / 2))
+                  //console.log('linkCompactXStart loop',child.x, child.y, savedData.x, savedData.y );
                   child.x = savedData.x;
                   child.y = savedData.y;
                   
@@ -731,9 +704,14 @@
           })
     }
 
+    
 
     // Recursive function to traverse through children and update their x and y values
-    function updateChildCoordinates(node) {
+    /*function updateChildCoordinates(node) {
+      console.log('node', node.x, node.y, node.depth, node);
+      const attrs = chart.getChartState();
+
+      //console.log('coordinate node before', node.id, node);
       // Check if the current node's ID exists in tempNodeChildSave
       if (tempNodeChildSave[node.data.id]) {
         // Get predefined values for that node ID
@@ -749,21 +727,124 @@
       }
 
       if(node.data.id === node_secondry.id){
-        node.x = node_main.x; // Update x
-        node.y = node_main.y; // Update y
-        node.x0 = node_main.x; // Update x0
-        node.y0 = node_main.y; // Update y0
+        console.log('running this', node_secondry.x, node_main.x);
+        let nodeX = node_main.x;
+        let nodeY = node_main.y;
+        /*if (node_secondry.firstCompact === null) {
+          nodeX += (nodeX > 0) ? 120 : -120;
+        }
+        node.x = nodeX; // Update x
+        node.y = nodeY; // Update y
+        node.x0 = nodeX; // Update x0
+        node.y0 = nodeY; // Update y0
 
         tempNodeChildSave[node_secondry.id] = {
           parentId: node_secondry.parent.id,
           id:node_secondry.id,
-          x: node_main.x,
-          y: node_main.y,
+          x: nodeX,
+          y: nodeY,
           width: '222',
           nodeSelf: node,
         };
 
       }
+      
+      if(node.parent.id === node_secondry.id){
+        //console.log('child of', node, node_main);
+        let nodeX = node.parent.x;
+        let nodeY = node.parent.y + 200;
+        console.log('bofore x', nodeX);
+        if(node.compactEven === true){
+          nodeX -= 150;
+        }else if((node.compactEven === false)){
+          nodeX += 150;
+        }
+        console.log('after x', nodeX);
+        
+        node.x = nodeX; // Update x
+        node.y = nodeY; // Update y
+        node.x0 = nodeX; // Update x0
+        node.y0 = nodeY; // Update y0
+
+        tempNodeChildSave[node.id] = {
+          parentId: node.parent.id,
+          id:node.id,
+          x: nodeX,
+          y: nodeY,
+          width: '222',
+          nodeSelf: node,
+        };
+
+      }
+      //console.log('coordinate node after', node.id, node.x,node.y, node);
+
+
+      const nodeWidth = 222;  // Assuming a fixed width for all nodes
+      const nodeHeight = 110; // Assuming a fixed height for all nodes
+      const padding = 10;     // Padding between nodes to avoid overlap
+
+      const nodeLeft = node.x - nodeWidth / 2;
+      const nodeRight = node.x + nodeWidth / 2;
+      const nodeTop = node.y - nodeHeight / 2;
+      const nodeBottom = node.y + nodeHeight / 2;
+      //console.log('nodeleft', nodeLeft, 'nodeRight', nodeRight, 'nodeTop', nodeTop, 'nodeBottom', nodeBottom );
+      nodesAll = attrs.allNodes;
+      // Compare with all other nodes to check for overlap
+      /*nodesAll.forEach((otherNode, otherIndex) => {
+        setTimeout(() => {
+          if (otherNode.x) {
+            //console.log('otherNode', otherNode, otherNode.x , otherNode.y,otherNode.id,  otherNode.depth);
+            const nodeCopy = {
+              x: otherNode.x,
+              y: otherNode.y,
+              id: otherNode.id,
+              row: otherNode.row
+              // Add other properties as needed, excluding circular ones like 'parent' or 'children'
+            };
+            //console.log('nodeCopy', nodeCopy.x, nodeCopy.y); 
+          }
+          if (node.id !== otherNode.id) {
+            // Define boundaries of the other node
+            const otherLeft = otherNode.x - nodeWidth / 2;
+            const otherRight = otherNode.x + nodeWidth / 2;
+            const otherTop = otherNode.y - nodeHeight / 2;
+            const otherBottom = otherNode.y + nodeHeight / 2;
+            // Check if nodes overlap horizontally and vertically
+            const horizontalOverlap = !(nodeRight < otherLeft || nodeLeft > otherRight);
+            const verticalOverlap = !(nodeBottom < otherTop || nodeTop > otherBottom);
+            if (!isNaN(otherLeft)) {
+              //console.log('horizontalOverlap', horizontalOverlap, 'verticalOverlap', verticalOverlap);
+              //console.log('node.id', node.id, 'nodeleft', nodeLeft, 'nodeRight', nodeRight, 'nodeTop', nodeTop, 'nodeBottom', nodeBottom, 'node.x', node.x,'node.y', node.y, node );
+      
+              //console.log('otherNode.id', otherNode.id,'otherleft', otherLeft, 'otherRight', otherRight, 'otherTop', otherTop, 'otherBottom', otherBottom, 'otherNode.x', otherNode.x, 'otherNode.y', otherNode.y, otherNode );
+              //console.log('node.id', node.id, 'node.x', node.x,'node.y', node.y,  'otherNode.id', otherNode.id, 'otherNode.x', otherNode.x, 'otherNode.y', otherNode.y);
+                  
+              // If overlap is detected, adjust the position of the current node
+              if (horizontalOverlap && verticalOverlap) {
+                console.log('matched');
+                // Resolve the overlap by shifting the current node (you can modify this logic)
+                // Move the node down by the node height + padding
+                //node.y += node.y + 100;
+              
+                // Optionally, move the node horizontally as well
+                //node.x += node.x + 100;
+      
+                // Update the tempNodeChildSave after adjusting position
+                /*tempNodeChildSave[node.id] = {
+                  parentId: node.parent.id,
+                  id: node.id,
+                  x: node.x,
+                  y: node.y,
+                  width: nodeWidth.toString(),
+                  nodeSelf: node,
+                };
+              }
+            }
+          }
+        }, otherIndex * 500); // Adding a 500ms delay for each iteration
+      });
+       // Closing the forEach loop
+      
 
       // If the node has children, recursively update them as well
       if (node.children && node.children.length > 0) {
@@ -777,7 +858,7 @@
 
       // Paging
       if (attrs.compact) {
-          this.calculateCompactFlexDimensions(attrs.root);
+        chart.calculateCompactFlexDimensions(attrs.root);
       }
 
       //  Assigns the x and y position for the nodes
@@ -798,12 +879,14 @@
         };
       }
     
-
       if (treeData['children'] && treeData['children'].length > 0) {
-        treeData['children'].forEach((child) => {
-          updateChildCoordinates(child);
+        treeData['children'].forEach((child, index) => {
+          setTimeout(() => {
+            updateChildCoordinates(child);
+          }, index * 500); // Adding a 500ms delay for each child
         });
       }
+      
 
       //console.log('treeData', treeData);
       // Reassigns the x and y position for the based on the compact layout
@@ -1225,7 +1308,818 @@
           })
       }
 
+    }*/
+
+    function checkOverlap(node) {
+      const attrs = chart.getChartState();
+      const nodeWidth = 222; // Fixed width for nodes
+      const nodeHeight = 110; // Fixed height for nodes
+      const padding = 10; // Padding between nodes to avoid overlap
+  
+      let nodeLeft, nodeRight, nodeTop, nodeBottom;
+  
+      if (tempNodeChildSave[node.id]) {
+          nodeLeft = tempNodeChildSave[node.id].x - nodeWidth / 2;
+          nodeRight = tempNodeChildSave[node.id].x + nodeWidth / 2;
+          nodeTop = tempNodeChildSave[node.id].y - nodeHeight / 2;
+          nodeBottom = tempNodeChildSave[node.id].y + nodeHeight / 2;
+      } else {
+          nodeLeft = node.x - nodeWidth / 2;
+          nodeRight = node.x + nodeWidth / 2;
+          nodeTop = node.y - nodeHeight / 2;
+          nodeBottom = node.y + nodeHeight / 2;
+      }
+  
+      //console.log(nodeLeft, nodeRight, nodeTop, nodeBottom);
+  
+      const nodesAll = attrs.allNodes;
+      let overlapInfo = { isOverlapping: false, direction: null };
+  
+      nodesAll.forEach((otherNode) => {
+        if (otherNode.id !== node.id && otherNode.y) {
+          // Define boundaries of the other node
+          const otherLeft = otherNode.x - nodeWidth / 2;
+          const otherRight = otherNode.x + nodeWidth / 2;
+          const otherTop = otherNode.y - nodeHeight / 2;
+          const otherBottom = otherNode.y + nodeHeight / 2;
+
+          // Check for overlap
+          const horizontalOverlap = !(nodeRight < otherLeft || nodeLeft > otherRight);
+          const verticalOverlap = !(nodeBottom < otherTop || nodeTop > otherBottom);
+
+          if (horizontalOverlap && verticalOverlap) {
+            //console.log('matched');
+            overlapInfo.isOverlapping = true;
+
+            // Determine overlap direction
+            if (nodeRight > otherLeft && nodeLeft < otherLeft) {
+              overlapInfo.direction = 'left'; // Node overlaps on the left
+            } else if (nodeLeft < otherRight && nodeRight > otherRight) {
+              overlapInfo.direction = 'right'; // Node overlaps on the right
+            }
+          }
+        }
+      });
+  
+      return overlapInfo;
     }
+
+    function checkOverlapChild(node) {
+      const attrs = chart.getChartState();
+      const nodeWidth = 222; // Fixed width for nodes
+      const nodeHeight = 110; // Fixed height for nodes
+      const padding = 10; // Padding between nodes to avoid overlap
+  
+      let nodeLeft, nodeRight, nodeTop, nodeBottom;
+      let nodeX = tempNodeChildSave[node_main.id];
+      //console.log('nodeX', nodeX);
+      let nodeY;
+      if(node.compactEven === true){
+        nodeX -= 126;
+      }else if((node.compactEven === false)){
+        nodeX += 126;
+      }
+      //console.log('after nodeX', nodeX);
+      // Count children of this parent node (using the childCount dictionary)
+      if (!tempChildCount[node.parent.id]) {
+        tempChildCount[node.parent.id] = 1; // Initialize counter for the parent
+
+        // Initialize value for y-position based on the parent's y-coordinate
+        tempChildCount['value'] = tempNodeChildSave[node.parent.id].y + 30;  // Start the first child below the parent
+      }
+
+      if (tempChildCount[node.parent.id] % 2 === 0) {
+        // Even-indexed children stay on the same y-level as previous odd child
+        nodeY = tempChildCount['value'];  // Use saved value
+      } else {
+        // Odd-indexed children move to the next row (150 units lower)
+        nodeY = tempChildCount['value'] + 150;
+        
+        // Update the saved 'value' for even children
+        tempChildCount['value'] = nodeY;
+      }
+
+      // Increment the child count for this parent after placing the child
+      tempChildCount[node.parent.id] += 1;
+      
+
+      
+      nodeLeft = nodeX - nodeWidth / 2;
+      nodeRight = nodeX + nodeWidth / 2;
+      nodeTop = nodeY - nodeHeight / 2;
+      nodeBottom = nodeY + nodeHeight / 2;
+  
+  
+      //console.log(nodeLeft, nodeRight, nodeTop, nodeBottom);
+  
+      const nodesAll = attrs.allNodes;
+      let overlapInfo = { isOverlapping: false, direction: null };
+  
+      nodesAll.forEach((otherNode) => {
+        if (otherNode.id !== node.id && otherNode.y) {
+          // Define boundaries of the other node
+          const otherLeft = otherNode.x - nodeWidth / 2;
+          const otherRight = otherNode.x + nodeWidth / 2;
+          const otherTop = otherNode.y - nodeHeight / 2;
+          const otherBottom = otherNode.y + nodeHeight / 2;
+          //console.log('nodeRight', nodeRight, 'nodeLeft', nodeLeft, 'otherLeft', otherLeft, 'otherRight', otherRight, 'node.id', node.id, 'node', node, 'node.x', node.x,'otherNode', otherNode, 'otherNode.id', otherNode.id, 'otherNode.x', otherNode.x);
+
+          // Check for overlap
+          const horizontalOverlap = !(nodeRight < otherLeft || nodeLeft > otherRight);
+          const verticalOverlap = !(nodeBottom < otherTop || nodeTop > otherBottom);
+
+          if (horizontalOverlap && verticalOverlap) {
+            //console.log('matched2');
+            overlapInfo.isOverlapping = true;
+            // Determine overlap direction
+            if (nodeRight > otherLeft && nodeLeft < otherLeft) {
+              overlapInfo.direction = 'left'; // Node overlaps on the left
+            } else if (nodeLeft < otherRight && nodeRight > otherRight) {
+              overlapInfo.direction = 'right'; // Node overlaps on the right
+            }
+          }
+        }
+      });
+  
+      return overlapInfo;
+    }
+    // Calculate the leftmost and rightmost neighbors (siblings) for the parent
+    function findExtremeXValues() {
+      let leftMostX = Infinity;
+      let rightMostX = -Infinity;
+      const attrs = chart.getChartState();
+      // Iterate over all nodes to find extreme x values
+      attrs.root.children.forEach(child => {
+          if (child.x < leftMostX) {
+              leftMostX = child.x; // Leftmost child
+          }
+          if (child.x > rightMostX) {
+              rightMostX = child.x; // Rightmost child
+          }
+      });
+
+      return { leftMostX, rightMostX };
+    }
+
+    
+
+    // Recursive function to traverse through children and update their x and y values
+    function updateChildCoordinates(node) {
+      //console.log('node', node, node.x, node.y, node.id);
+
+      if(node.data.id === node_secondry.id){
+        let overlapInfo = checkOverlap(node);
+        let nodeX = node_main.x;
+        let nodeY = node_main.y;
+        let childOverlapInfo;
+        /*
+        while (overlapInfo.isOverlapping) {
+          // Adjust node's position based on overlap direction
+          if (overlapInfo.direction === 'right') {
+              nodeX += 200; // Move the node to the right
+          } else if (overlapInfo.direction === 'left') {
+              nodeX -= 200; // Move the node to the left
+          }
+
+          // Update node's position
+          node.x = nodeX;
+          node.y = nodeY; // Keep y same as node_main.y
+          node.x0 = nodeX;
+          node.y0 = nodeY;
+
+          tempNodeChildSave[node_secondry.id] = {
+            parentId: node_secondry.parent.id,
+            id:node_secondry.id,
+            x: nodeX,
+            y: node_main.y,
+            width: '222',
+            nodeSelf: node,
+          };
+
+          // Re-check for overlap
+          overlapInfo = checkOverlap(node);
+          //console.log('Updated overlapInfo', overlapInfo);
+        }
+        const attrs = chart.getChartState();
+        
+        
+        //Check overlap for all children nodes
+        if (node.children && node.children.length > 0) {
+          console.log('go');
+          for (let i = 0; i < node.children.length; i++) {
+            const childNode = node.children[i];
+            //Check overlap for the child
+            childOverlapInfo = checkOverlapChild(childNode);
+            if (childOverlapInfo.isOverlapping) {
+              break; // Exit the loop if overlap is found
+            }
+          }
+          tempChildCount = {};
+        }
+        
+        if(childOverlapInfo){
+          if(childOverlapInfo.isOverlapping){
+            // Calculate the extreme x positions of siblings/children
+            const { leftMostX, rightMostX } = findExtremeXValues(node);
+            console.log('Leftmost X:', leftMostX, 'Rightmost X:', rightMostX);
+
+            // Compare absolute values to find which one is farther from 0
+            if (Math.abs(rightMostX) > Math.abs(leftMostX)) {
+              // Right side is farther, so move the parent node to the right
+              nodeX = rightMostX + 400; // Adjust this value as needed
+              console.log('Moving node to the right');
+            } else {
+              // Left side is farther, so move the parent node to the left
+              nodeX = rightMostX - 200; // Adjust this value as needed
+              console.log('Moving node to the left');
+            }
+          }
+        }
+        
+        console.log('childOverlapInfo2', childOverlapInfo);
+        //console.log('node condition', node.x, node.y, node.id, node_secondry.id)
+        tempNodeChildSave[node_secondry.id] = {
+          parentId: node_secondry.parent.id,
+          id:node_secondry.id,
+          x: nodeX,
+          y: node_main.y,
+          width: '222',
+          nodeSelf: node,
+        };*/
+
+        node.x = node_main.x; // Update x
+        node.y = node_main.y; // Update y
+        node.x0 = node_main.x; // Update x0
+        node.y0 = node_main.y; // Update y0
+
+        tempNodeChildSave[node_secondry.id] = {
+          parentId: node_secondry.parent.id,
+          id:node_secondry.id,
+          x: node_main.x,
+          y: node_main.y,
+          width: '222',
+          nodeSelf: node,
+        };
+      }
+
+      // Check if the current node's ID exists in tempNodeChildSave
+      if (tempNodeChildSave[node.data.id]) {
+        // Get predefined values for that node ID
+        const predefinedValues = tempNodeChildSave[node.data.id];
+        // Update the x and y values based on predefined values
+        //console.log(`Before Update - Node ID: ${node.data.id}, X: ${node.x}, Y: ${node.y}`);
+        node.x = predefinedValues.x; // Update x
+        node.y = predefinedValues.y; // Update y
+        node.x0 = predefinedValues.x; // Update x0
+        node.y0 = predefinedValues.y; // Update y0
+        //console.log(`After Update - Node ID: ${node.data.id}, New X: ${node.x}, New Y: ${node.y}`);
+      }
+
+      if(node.parent.id === node_secondry.id){
+        let nodeX = node.parent.x;
+        let nodeY;
+        if(node.compactEven === true){
+          nodeX -= 126;
+        }else if((node.compactEven === false)){
+          nodeX += 126;
+        }
+
+        // Count children of this parent node (using the childCount dictionary)
+        if (!childCount[node.parent.id]) {
+          childCount[node.parent.id] = 1; // Initialize counter for the parent
+
+          // Initialize value for y-position based on the parent's y-coordinate
+          childCount['value'] = node.parent.y + 30;  // Start the first child below the parent
+        }
+
+        if (childCount[node.parent.id] % 2 === 0) {
+          // Even-indexed children stay on the same y-level as previous odd child
+          nodeY = childCount['value'];  // Use saved value
+        } else {
+          // Odd-indexed children move to the next row (150 units lower)
+          nodeY = childCount['value'] + 150;
+          
+          // Update the saved 'value' for even children
+          childCount['value'] = nodeY;
+        }
+
+        // Increment the child count for this parent after placing the child
+        childCount[node.parent.id] += 1;
+        
+
+        // Update node's position
+        node.x = nodeX;
+        node.y = nodeY; // Keep y same as node_main.y
+        node.x0 = nodeX;
+        node.y0 = nodeY;
+
+        tempNodeChildSave[node.id] = {
+          parentId: node.parent.id,
+          id:node.id,
+          x: nodeX,
+          y: nodeY,
+          width: '222',
+          nodeSelf: node,
+        };
+
+      }
+
+      //console.log('predefined', tempNodeChildSave);
+
+      // If the node has children, recursively update them as well
+      if (node.children && node.children.length > 0) {
+          node.children.forEach(child => updateChildCoordinates(child)); // Recursion for each child
+      }
+
+    }
+
+    chart.update = function({ x0, y0, x = 0, y = 0, width, height }) {
+      const attrs = this.getChartState();
+      const calc = attrs.calc;
+
+      // Paging
+      if (attrs.compact) {
+          this.calculateCompactFlexDimensions(attrs.root);
+      }
+
+      //  Assigns the x and y position for the nodes
+      const treeData = attrs.flexTreeLayout(attrs.root);
+      
+      if (treeData.id === node_secondry.id) {
+        treeData.x = node_main.x;    // Update x
+        treeData.y = node_main.y;    // Update y
+        treeData.x0 = node_main.x;   // Update x0
+        treeData.y0 = node_main.y;   // Update y0
+        /*tempNodeChildSave[node_main.subject.id] = {
+          parentId: node_main.subject.id,
+          id:node_main.subject.id,
+          x: node_main.x,
+          y: node_main.y,
+          width: '222',
+          nodeSelf: node,
+        };*/
+      }
+    
+
+      
+
+      //console.log('treeData', treeData);
+      // Reassigns the x and y position for the based on the compact layout
+      if (attrs.compact) {
+        calculateCompactFlexPositions(attrs.root);
+      }
+
+      if (treeData['children'] && treeData['children'].length > 0) {
+         // Initialize or increment the count for the current node id
+        if (!checkExpandCollapse[node_main.id]) {
+          checkExpandCollapse[node_main.id] = 1; // Initialize with 1 if not already set
+          treeData['children'].forEach((child) => {
+            //setTimeout(() => {
+              //console.log('before child', child, child['x'], child.y, child.id);
+              updateChildCoordinates(child);
+              //console.log('after child', child, child.x, child.y, child.id);
+            //}, 50);
+          });
+        } else {
+          checkExpandCollapse[node_main.id] += 1; // Increment by 1 if it already exists
+          tempNodeChildSave = {};
+          attrs.allNodes.forEach(node => {
+            if(node.id !== '100'){
+              console.log(node.id, node);
+              //updateChildCoordinates(node);
+            }
+            if (node.id === node_secondry.id) {
+              if(node.children){
+                console.log('node is expand', tempNodeChildSave);
+              }else{
+                console.log('node is collapsed', tempNodeChildSave);
+              }
+            }
+          });
+        }
+        console.log('checkExpandCollapse',checkExpandCollapse[node_main.id]);
+        
+        // After the loop, clear the child count dictionary for future use
+        childCount = {};
+      }
+
+      const nodes = treeData.descendants();
+
+      // //console.table(nodes.map(d => ({ x: d.x, y: d.y, width: d.width, height: d.height, flexCompactDim: d.flexCompactDim + "" })))
+
+      // Get all links
+      const links = treeData.descendants().slice(1);
+      nodes.forEach(attrs.layoutBindings[attrs.layout].swap)
+
+      // Connections
+      const connections = attrs.connections;
+      const allNodesMap = {};
+      attrs.allNodes.forEach(d => allNodesMap[attrs.nodeId(d.data)] = d);
+
+      const visibleNodesMap = {}
+      nodes.forEach(d => visibleNodesMap[attrs.nodeId(d.data)] = d);
+
+      connections.forEach(connection => {
+          const source = allNodesMap[connection.from];
+          const target = allNodesMap[connection.to];
+          connection._source = source;
+          connection._target = target;
+      })
+      const visibleConnections = connections.filter(d => visibleNodesMap[d.from] && visibleNodesMap[d.to]);
+      const defsString = attrs.defs.bind(this)(attrs, visibleConnections);
+      const existingString = attrs.defsWrapper.html();
+      if (defsString !== existingString) {
+          attrs.defsWrapper.html(defsString)
+      }
+
+      // --------------------------  LINKS ----------------------
+      // Get links selection
+      const linkSelection = attrs.linksWrapper
+          .selectAll("path.link")
+          .data(links, (d) => attrs.nodeId(d.data));
+
+      // Enter any new links at the parent's previous position.
+      const linkEnter = linkSelection
+          .enter()
+          .insert("path", "g")
+          .attr("class", "link")
+          .attr("d", (d) => {
+              const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x: x0, y: y0, width, height });
+              const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x: x0, y: y0, width, height });
+              const o = { x: xo, y: yo };
+              return attrs.layoutBindings[attrs.layout].diagonal(o, o, o);
+          });
+
+      // Get links update selection
+      const linkUpdate = linkEnter.merge(linkSelection);
+
+      // Styling links
+      linkUpdate
+          .attr("fill", "none")
+
+
+      if (this.isEdge()) {
+          linkUpdate
+              .style('display', d => {
+                  const display = d.data._pagingButton ? 'none' : 'auto'
+                  return display;
+              })
+      } else {
+          linkUpdate
+              .attr('display', d => {
+                  const display = d.data._pagingButton ? 'none' : 'auto'
+                  return display;
+              })
+      }
+
+      // Allow external modifications
+      linkUpdate.each(attrs.linkUpdate);
+
+      // Transition back to the parent element position
+      linkUpdate
+          .transition()
+          .duration(attrs.duration)
+          .attr("d", (d) => {
+              const n = attrs.compact && d.flexCompactDim ?
+                  {
+                      x: attrs.layoutBindings[attrs.layout].compactLinkMidX(d, attrs),
+                      y: attrs.layoutBindings[attrs.layout].compactLinkMidY(d, attrs)
+                  } :
+                  {
+                      x: attrs.layoutBindings[attrs.layout].linkX(d),
+                      y: attrs.layoutBindings[attrs.layout].linkY(d)
+                  };
+
+              const p = {
+                  x: attrs.layoutBindings[attrs.layout].linkParentX(d),
+                  y: attrs.layoutBindings[attrs.layout].linkParentY(d),
+              };
+
+              const m = attrs.compact && d.flexCompactDim ? {
+                  x: attrs.layoutBindings[attrs.layout].linkCompactXStart(d),
+                  y: attrs.layoutBindings[attrs.layout].linkCompactYStart(d),
+              } : n;
+              return attrs.layoutBindings[attrs.layout].diagonal(n, p, m, { sy: attrs.linkYOffset });
+          });
+
+      // Remove any  links which is exiting after animation
+      const linkExit = linkSelection
+          .exit()
+          .transition()
+          .duration(attrs.duration)
+          .attr("d", (d) => {
+              const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x, y, width, height });
+              const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x, y, width, height });
+              const o = { x: xo, y: yo };
+              return attrs.layoutBindings[attrs.layout].diagonal(o, o, null, { sy: attrs.linkYOffset });
+          })
+          .remove();
+
+
+      // --------------------------  CONNECTIONS ----------------------
+
+      const connectionsSel = attrs.connectionsWrapper
+          .selectAll("path.connection")
+          .data(visibleConnections)
+
+      // Enter any new connections at the parent's previous position.
+      const connEnter = connectionsSel
+          .enter()
+          .insert("path", "g")
+          .attr("class", "connection")
+          .attr("d", (d) => {
+              const xo = attrs.layoutBindings[attrs.layout].linkJoinX({ x: x0, y: y0, width, height });
+              const yo = attrs.layoutBindings[attrs.layout].linkJoinY({ x: x0, y: y0, width, height });
+              const o = { x: xo, y: yo };
+              return attrs.layoutBindings[attrs.layout].diagonal(o, o, null, { sy: attrs.linkYOffset });
+          });
+
+
+      // Get connections update selection
+      const connUpdate = connEnter.merge(connectionsSel);
+
+      // Styling connections
+      connUpdate.attr("fill", "none")
+
+      // Transition back to the parent element position
+      connUpdate
+          .transition()
+          .duration(attrs.duration)
+          .attr('d', (d) => {
+              const xs = attrs.layoutBindings[attrs.layout].linkX({ x: d._source.x, y: d._source.y, width: d._source.width, height: d._source.height });
+              const ys = attrs.layoutBindings[attrs.layout].linkY({ x: d._source.x, y: d._source.y, width: d._source.width, height: d._source.height });
+              const xt = attrs.layoutBindings[attrs.layout].linkJoinX({ x: d._target.x, y: d._target.y, width: d._target.width, height: d._target.height });
+              const yt = attrs.layoutBindings[attrs.layout].linkJoinY({ x: d._target.x, y: d._target.y, width: d._target.width, height: d._target.height });
+              return attrs.linkGroupArc({ source: { x: xs, y: ys }, target: { x: xt, y: yt } })
+          })
+
+      // Allow external modifications
+      connUpdate.each(attrs.connectionsUpdate);
+
+      // Remove any  links which is exiting after animation
+      const connExit = connectionsSel
+          .exit()
+          .transition()
+          .duration(attrs.duration)
+          .attr('opacity', 0)
+          .remove();
+
+      // --------------------------  NODES ----------------------
+      // Get nodes selection
+      const nodesSelection = attrs.nodesWrapper
+          .selectAll("g.node")
+          .data(nodes, ({ data }) => attrs.nodeId(data));
+
+      // Enter any new nodes at the parent's previous position.
+      const nodeEnter = nodesSelection
+          .enter()
+          .append("g")
+          .attr("class", "node")
+          .attr("transform", (d) => {
+              if (d == attrs.root) return `translate(${x0},${y0})`
+              const xj = attrs.layoutBindings[attrs.layout].nodeJoinX({ x: x0, y: y0, width, height });
+              const yj = attrs.layoutBindings[attrs.layout].nodeJoinY({ x: x0, y: y0, width, height });
+              return `translate(${xj},${yj})`
+          })
+          .attr("cursor", "pointer")
+          .on("click.node", (event, node) => {
+              const { data } = node;
+              if ([...event.srcElement.classList].includes("node-button-foreign-object")) {
+                  return;
+              }
+              if ([...event.srcElement.classList].includes("paging-button-wrapper")) {
+                  this.loadPagingNodes(node);
+                  return;
+              }
+              if (!data._pagingButton) {
+                  attrs.onNodeClick(node);
+                  return;
+              }
+              //console.log('event fired, no handlers')
+          })
+          //  Event handler to the expand button
+          .on("keydown.node", (event, node) => {
+              const { data } = node;
+              if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                  if ([...event.srcElement.classList].includes("node-button-foreign-object")) {
+                      return;
+                  }
+                  if ([...event.srcElement.classList].includes("paging-button-wrapper")) {
+                      this.loadPagingNodes(node);
+                      return;
+                  }
+                  if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                      this.onButtonClick(event, node)
+                  }
+              }
+          });
+      nodeEnter.each(attrs.nodeEnter)
+
+      // Add background rectangle for the nodes
+      nodeEnter
+          .patternify({
+              tag: "rect",
+              selector: "node-rect",
+              data: (d) => [d]
+          })
+
+      // Node update styles
+      const nodeUpdate = nodeEnter
+          .merge(nodesSelection)
+          .style("font", "12px sans-serif");
+
+      // Add foreignObject element inside rectangle
+      const fo = nodeUpdate.patternify({
+          tag: "foreignObject",
+          selector: "node-foreign-object",
+          data: (d) => [d]
+      })
+          .style('overflow', 'visible')
+
+      // Add foreign object
+      fo.patternify({
+          tag: "xhtml:div",
+          selector: "node-foreign-object-div",
+          data: (d) => [d]
+      })
+
+      this.restyleForeignObjectElements();
+
+      // Add Node button circle's group (expand-collapse button)
+      const nodeButtonGroups = nodeEnter
+          .patternify({
+              tag: "g",
+              selector: "node-button-g",
+              data: (d) => [d]
+          })
+          .on("click", (event, d) => this.onButtonClick(event, d))
+          .on("keydown", (event, d) => {
+              if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                  this.onButtonClick(event, d)
+              }
+          });
+
+      nodeButtonGroups.patternify({
+          tag: 'rect',
+          selector: 'node-button-rect',
+          data: (d) => [d]
+      })
+          .attr('opacity', 0)
+          .attr('pointer-events', 'all')
+          .attr('width', d => attrs.nodeButtonWidth(d))
+          .attr('height', d => attrs.nodeButtonHeight(d))
+          .attr('x', d => attrs.nodeButtonX(d))
+          .attr('y', d => attrs.nodeButtonY(d))
+
+      // Add expand collapse button content
+      const nodeFo = nodeButtonGroups
+          .patternify({
+              tag: "foreignObject",
+              selector: "node-button-foreign-object",
+              data: (d) => [d]
+          })
+          .attr('width', d => attrs.nodeButtonWidth(d))
+          .attr('height', d => attrs.nodeButtonHeight(d))
+          .attr('x', d => attrs.nodeButtonX(d))
+          .attr('y', d => attrs.nodeButtonY(d))
+          .style('overflow', 'visible')
+          .patternify({
+              tag: "xhtml:div",
+              selector: "node-button-div",
+              data: (d) => [d]
+          })
+          .style('pointer-events', 'none')
+          .style('display', 'flex')
+          .style('width', '100%')
+          .style('height', '100%')
+
+
+
+      // Transition to the proper position for the node
+      nodeUpdate
+          .transition()
+          .attr("opacity", 0)
+          .duration(attrs.duration)
+          .attr("transform", ({ x, y, width, height }) => {
+              return attrs.layoutBindings[attrs.layout].nodeUpdateTransform({ x, y, width, height });
+
+          })
+          .attr("opacity", 1);
+
+      // Style node rectangles
+      nodeUpdate
+          .select(".node-rect")
+          .attr("width", ({ width }) => width)
+          .attr("height", ({ height }) => height)
+          .attr("x", ({ width }) => 0)
+          .attr("y", ({ height }) => 0)
+          .attr("cursor", "pointer")
+          .attr('rx', 3)
+          .attr("fill", attrs.nodeDefaultBackground)
+
+
+      nodeUpdate.select(".node-button-g").attr("transform", ({ data, width, height }) => {
+          const x = attrs.layoutBindings[attrs.layout].buttonX({ width, height });
+          const y = attrs.layoutBindings[attrs.layout].buttonY({ width, height });
+          return `translate(${x},${y})`
+      })
+          .attr("display", ({ data }) => {
+              return data._directSubordinates > 0 ? null : 'none';
+          })
+          .attr("opacity", ({ data, children, _children }) => {
+              if (data._pagingButton) {
+                  return 0;
+              }
+              if (children || _children) {
+                  return 1;
+              }
+              return 0;
+          });
+
+      // Restyle node button circle
+      nodeUpdate
+          .select(".node-button-foreign-object .node-button-div")
+          .html((node) => {
+              return attrs.buttonContent({ node, state: attrs })
+          })
+
+      // Restyle button texts
+      nodeUpdate
+          .select(".node-button-text")
+          .attr("text-anchor", "middle")
+          .attr("alignment-baseline", "middle")
+          .attr("font-size", ({ children }) => {
+              if (children) return 40;
+              return 26;
+          })
+          .text(({ children }) => {
+              if (children) return "-";
+              return "+";
+          })
+          .attr("y", this.isEdge() ? 10 : 0);
+
+      nodeUpdate.each(attrs.nodeUpdate)
+
+      // Remove any exiting nodes after transition
+      const nodeExitTransition = nodesSelection
+          .exit()
+      nodeExitTransition.each(attrs.nodeExit)
+
+      const maxDepthNode = nodeExitTransition.data().reduce((a, b) => a.depth < b.depth ? a : b, { depth: Infinity });
+
+      nodeExitTransition.attr("opacity", 1)
+          .transition()
+          .duration(attrs.duration)
+          .attr("transform", (d) => {
+
+              let { x, y, width, height } = maxDepthNode.parent || {};
+              const ex = attrs.layoutBindings[attrs.layout].nodeJoinX({ x, y, width, height });
+              const ey = attrs.layoutBindings[attrs.layout].nodeJoinY({ x, y, width, height });
+              return `translate(${ex},${ey})`
+          })
+          .on("end", function () {
+              d3.select(this).remove();
+          })
+          .attr("opacity", 0);
+
+      // Store the old positions for transition.
+      nodes.forEach((d) => {
+          d.x0 = d.x;
+          d.y0 = d.y;
+      });
+
+      // CHECK FOR CENTERING
+      const centeredNode = attrs.allNodes.filter(d => d.data._centered)[0]
+      if (centeredNode) {
+          let centeredNodes = [centeredNode]
+          if (centeredNode.data._centeredWithDescendants) {
+              if (attrs.compact) {
+                  centeredNodes = centeredNode.descendants().filter((d, i) => i < 7);
+              } else {
+                  centeredNodes = centeredNode.descendants().filter((d, i, arr) => {
+                      const h = Math.round(arr.length / 2);
+                      const spread = 2;
+                      if (arr.length % 2) {
+                          return i > h - spread && i < h + spread - 1;
+                      }
+
+                      return i > h - spread && i < h + spread;
+                  });
+              }
+
+          }
+          centeredNode.data._centeredWithDescendants = null;
+          centeredNode.data._centered = null;
+          this.fit({
+              animate: true,
+              scale: false,
+              nodes: centeredNodes
+          })
+      }
+
+    }
+
+    checkExpandCollapse = {}
 
     let nodeData;
     let toAssignX;
@@ -1332,33 +2226,33 @@
       */
       //work on drop & expand
       
-      layout.top.linkCompactXStart = function(node) {
+      layout.top.linkCompactXStart = function(d) {
         // Retrieve chart attributes and layout information
         const attrs = chart.getChartState();
     
         // Get the CompactX value (middle point between siblings)
-        const CompactX = attrs.layoutBindings[attrs.layout].compactLinkMidX(node, attrs);
+        const CompactX = attrs.layoutBindings[attrs.layout].compactLinkMidX(d, attrs);
     
-        // Check if the node has been dragged to the opposite side of CompactX
+        // Check if the d has been dragged to the opposite side of CompactX
         let finalCompact;
-        // If the node is on the left of CompactX but should connect to the right (based on compactEven)
-        if (CompactX < node.x && node.compactEven) {
-          finalCompact = -node.width / 2;  // Attach to the left side of the node
+        // If the d is on the left of CompactX but should connect to the right (based on compactEven)
+        if (CompactX < d.x && d.compactEven) {
+          finalCompact = -d.width / 2;  // Attach to the left side of the d
         }
-        // If the node is on the right of CompactX but should connect to the left (based on compactEven)
-        else if (CompactX > node.x && !node.compactEven) {
-            finalCompact = node.width / 2;  // Attach to the right side of the node
+        // If the d is on the right of CompactX but should connect to the left (based on compactEven)
+        else if (CompactX > d.x && !d.compactEven) {
+            finalCompact = d.width / 2;  // Attach to the right side of the d
         } else {
             // Otherwise, use the default logic (based on compactEven value)
-            finalCompact = node.compactEven ? node.width / 2 : -node.width / 2;
+            finalCompact = d.compactEven ? d.width / 2 : -d.width / 2;
         }
         // Return the adjusted x position for the path attachment
-        return node.x + finalCompact;
+        return d.x + finalCompact;
       };
     
-      layout.top.linkCompactYStart = function(node) {
-        ////console.log("linkCompactYStart", node, node.y + node.height / 2);
-        return node.y + node.height / 2;
+      layout.top.linkCompactYStart = function(d) {
+        ////console.log("linkCompactYStart", d, d.y + d.height / 2);
+        return d.y + d.height / 2;
       };
 
       
@@ -1732,10 +2626,10 @@
     <div class="sidebar-header border-bottom">
     <div class="sidebar-brand">
         <svg class="sidebar-brand-full" width="110" height="32" alt="CoreUI Logo">
-        <use xlink:href="assets/brand/coreui.svg#full"></use>
+        <use xlink:href="{% static "assets/brand/coreui.svg" %}#full"></use>
         </svg>
         <svg class="sidebar-brand-narrow" width="32" height="32" alt="CoreUI Logo">
-        <use xlink:href="assets/brand/coreui.svg#signet"></use>
+        <use xlink:href="{% static "assets/brand/coreui.svg" %}#signet"></use>
         </svg>
     </div>
     <button class="btn-close d-lg-none"  type="button" aria-label="Close" ></button>
@@ -1747,7 +2641,7 @@
         <li class="nav-title" data-coreui-i18n="components">Components</li>
         <li class="nav-group"><a class="nav-link nav-group-toggle" draggable="false" href="#">
             <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-puzzle"></use>
+                <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-puzzle"></use>
             </svg><span data-coreui-i18n="base">Base</span></a>
             <ul class="nav-group-items compact">
               <li class="nav-item"><a class="nav-link" href="base/accordion.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span><span data-coreui-i18n="accordion">Accordion</span></a></li>
@@ -1768,7 +2662,7 @@
         </li>
         <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
             <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-cursor"></use>
+                <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-cursor"></use>
             </svg><span data-coreui-i18n="buttons">Buttons</span></a>
             <ul class="nav-group-items compact">
             <li class="nav-item"><a class="nav-link" href="buttons/buttons.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Buttons</a></li>
@@ -1798,7 +2692,7 @@
         </li>
         <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
             <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-star"></use>
+                <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-star"></use>
             </svg><span data-coreui-i18n="icons">Icons</span></a>
             <ul class="nav-group-items compact">
             <li class="nav-item"><a class="nav-link" href="icons/coreui-icons-free.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> CoreUI Icons<span class="badge bg-success ms-auto" data-coreui-i18n="free">Free</span></a></li>
@@ -1808,7 +2702,7 @@
         </li>
         <li class="nav-group"><a class="nav-link nav-group-toggle" href="#">
             <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
+                <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-bell"></use>
             </svg><span data-coreui-i18n="notifications">Notifications</span></a>
             <ul class="nav-group-items compact">
             <li class="nav-item"><a class="nav-link" href="notifications/alerts.html"><span class="nav-icon"><span class="nav-icon-bullet"></span></span> Alerts</a></li>
@@ -1819,7 +2713,7 @@
         </li>
         <li class="nav-item"><a class="nav-link" href="widgets.html">
             <svg class="nav-icon">
-                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-calculator"></use>
+                <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-calculator"></use>
             </svg><span data-coreui-i18n="widgets">Widgets</span><span class="badge bg-info-gradient text-uppercase ms-auto" data-coreui-i18n="new">New</span></a></li>
         <li class="nav-divider"></li>
         
@@ -1903,28 +2797,28 @@
                 <li class="nav-item dropdown">
                   <button class="btn btn-link nav-link" type="button" aria-expanded="false" data-coreui-toggle="dropdown">
                   <svg class="icon icon-lg theme-icon-active">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-contrast"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-contrast"></use>
                   </svg>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end" style="--cui-dropdown-min-width: 8rem;">
                   <li>
                       <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-theme-value="light">
                       <svg class="icon icon-lg me-3">
-                          <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-sun"></use>
+                          <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-sun"></use>
                       </svg><span data-coreui-i18n="light">Light</span>
                       </button>
                   </li>
                   <li>
                       <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-theme-value="dark">
                       <svg class="icon icon-lg me-3">
-                          <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-moon"></use>
+                          <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-moon"></use>
                       </svg><span data-coreui-i18n="dark"> Dark</span>
                       </button>
                   </li>
                   <li>
                       <button class="dropdown-item d-flex align-items-center active" type="button" data-coreui-theme-value="auto">
                       <svg class="icon icon-lg me-3">
-                          <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-contrast"></use>
+                          <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-contrast"></use>
                       </svg>Auto
                       </button>
                   </li>
@@ -1938,41 +2832,41 @@
             <ul class="header-nav ms-auto ms-md-0">
               <!--Profile-->
               <li class="nav-item dropdown" ><a class="nav-link py-0" draggable="false" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true">
-                  <div class="avatar avatar-md"><img class="avatar-img" draggable="false" src="assets/img/avatars/8.jpg" alt="user@email.com"></div>
+                  <div class="avatar avatar-md"><img class="avatar-img" draggable="false" src="{% static "assets/img/avatars/8.jpg" %}" alt="user@email.com"></div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end pt-0">
                   <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2"  data-coreui-i18n="account">Account</div><a class="dropdown-item" href="#" draggable="false">
                     <svg class="icon me-2">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-bell"></use>
                     </svg><span data-coreui-i18n="updates" draggable="false">Updates</span><span class="badge badge-sm bg-info-gradient ms-2">42</span></a><a class="dropdown-item" href="#" >
                     <svg class="icon me-2">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-envelope-open"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-envelope-open"></use>
                     </svg><span data-coreui-i18n="messages">Messages</span><span class="badge badge-sm badge-sm bg-success ms-2">42</span></a><a class="dropdown-item" href="#">
                     <svg class="icon me-2">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-task"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-task"></use>
                     </svg><span data-coreui-i18n="tasks">Tasks</span><span class="badge badge-sm bg-danger-gradient ms-2">42</span></a><a class="dropdown-item" href="#">
                     <svg class="icon me-2">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-comment-square"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-comment-square"></use>
                     </svg><span data-coreui-i18n="comments">Comments</span><span class="badge badge-sm bg-warning-gradient ms-2">42</span></a>
                   <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2" data-coreui-i18n="settings">Settings</div><a class="dropdown-item" href="#" draggable="false">
                     <svg class="icon me-2">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-user"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-user"></use>
                     </svg><span data-coreui-i18n="profile">Profile</span></a><a class="dropdown-item" href="#">
                     <svg class="icon me-2">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-settings"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-settings"></use>
                     </svg><span data-coreui-i18n="settings">Settings</span></a><a class="dropdown-item" href="#">
                     <svg class="icon me-2">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-credit-card"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-credit-card"></use>
                     </svg><span data-coreui-i18n="payments">Payments</span><span class="badge badge-sm bg-secondary-gradient text-dark ms-2">42</span></a><a class="dropdown-item" href="#">
                     <svg class="icon me-2">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-file"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-file"></use>
                     </svg><span data-coreui-i18n="projects">Projects</span><span class="badge badge-sm bg-primary-gradient ms-2">42</span></a>
                   <div class="dropdown-divider"></div><a class="dropdown-item" href="#" draggable="false">
                     <svg class="icon me-2">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-lock-locked"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-lock-locked"></use>
                     </svg><span data-coreui-i18n="lockAccount">Lock Account</span></a><a class="dropdown-item" href="#">
                     <svg class="icon me-2">
-                      <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-account-logout"></use>
+                      <use xlink:href="{% static "vendors/@coreui/icons/svg/free.svg" %}#cil-account-logout"></use>
                     </svg><span data-coreui-i18n="logout">Logout</span></a>
                 </div>
               </li>
@@ -2042,10 +2936,10 @@
 
 </script>
 <!-- CoreUI and necessary plugins-->
-<script src="vendors/@coreui/coreui-pro/js/coreui.bundle.min.js"></script>
-<script src="vendors/simplebar/js/simplebar.min.js"></script>
-<script src="vendors/i18next/js/i18next.min.js"></script>
-<script src="vendors/i18next-http-backend/js/i18nextHttpBackend.js"></script>
+<script src="{% static "vendors/@coreui/coreui-pro/js/coreui.bundle.min.js" %}"></script>
+<script src="{% static "vendors/simplebar/js/simplebar.min.js" %}"></script>
+<script src="{% static "vendors/i18next/js/i18next.min.js" %}"></script>
+<script src="{% static "vendors/i18next-http-backend/js/i18nextHttpBackend.js" %}"></script>
 
 <script>
   const header = document.querySelector('header.header');
