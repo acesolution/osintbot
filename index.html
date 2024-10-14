@@ -340,6 +340,7 @@
   }
   
   function addNodeToChart(nodeName) {
+    checkExpandCollapse = {};
      // Define a map to associate node names with icon classes
     const iconMap = {
         "Email": "https://cdn-icons-png.freepik.com/512/552/552486.png",
@@ -1086,8 +1087,8 @@
 
       if (treeData['children'] && treeData['children'].length > 0) {
          // Initialize or increment the count for the current node id
-        if (!checkExpandCollapse[node_main.id]) {
-          checkExpandCollapse[node_main.id] = 1; // Initialize with 1 if not already set
+        if (!checkExpandCollapse[node_main.subject.id]) {
+          checkExpandCollapse[node_main.subject.id] = 1; // Initialize with 1 if not already set
           if (tempNodeChildSave[treeData.id]) {
             treeData.x = tempNodeChildSave[treeData.id].x;    // Update x
             treeData.y = tempNodeChildSave[treeData.id].y;    // Update y
@@ -1102,10 +1103,11 @@
             //}, 50);
           });
         } else {
-          checkExpandCollapse[node_main.id] += 1; // Increment by 1 if it already exists
+          console.log('node_main', node_main.subject.id);
+          checkExpandCollapse[node_main.subject.id] += 1; // Increment by 1 if it already exists
           tempNodeChildSave = {};
         }
-        console.log('checkExpandCollapse',checkExpandCollapse[node_main.id]);
+        //console.log('checkExpandCollapse',checkExpandCollapse);
         
         // After the loop, clear the child count dictionary for future use
         childCount = {};
@@ -1527,7 +1529,7 @@
 
     }
 
-    checkExpandCollapse = {}
+    checkExpandCollapse = {};
 
     let nodeData;
     let toAssignX;
@@ -1612,7 +1614,7 @@
       layout.top.linkY = function(d) {
         console.log('linkY', d, d.y, node_main.y, node_secondry.parent);
         if(node_secondry.parent !== null){
-          console.log('yes');
+          //console.log('yes');
           if(d.y <= node_secondry.parent.y && d.id === node_secondry.id){
             //console.log('met');
             return node_main.y + node_secondry.height;
