@@ -523,7 +523,6 @@
   function onDragEnd(element, dragEvent) {
     //console.log('dragNode', dragNode);
     //console.log('dropNode', dropNode);
-    
 
     document
       .querySelector('.chart-container')
@@ -872,14 +871,20 @@
     // Recursive function to traverse through children and update their x and y values
     function updateChildCoordinates(node) {
       //console.log('node', node, node.x, node.y, node.id);
-      //console.log('node', node);
 
       if(node.data.id === node_secondry.data.id){
         //console.log('yes');
         //let overlapInfo = checkOverlap(node);
+        console.log('node', node);
+
         let nodeX = node_main.x;
         let nodeY = node_main.y;
         let childOverlapInfo;
+        //node.compactEven = null;
+        /*node.firstCompact = null;
+        node.compactEven = null;
+        node.flexCompactDim = null;
+        node.firstCompactNode = null;*/``
         /*
         while (overlapInfo.isOverlapping) {
           // Adjust node's position based on overlap direction
@@ -982,55 +987,59 @@
         node.y0 = predefinedValues.y; // Update y0
         //console.log(`After Update - Node ID: ${node.data.id}, New X: ${node.x}, New Y: ${node.y}`);
       }
-
-      if(node.parent.id === node_secondry.id){
-        let nodeX = node.parent.x;
-        let nodeY;
-        if(node.compactEven === true){
-          nodeX -= 126;
-        }else if((node.compactEven === false)){
-          nodeX += 126;
-        }
-
-        // Count children of this parent node (using the childCount dictionary)
-        if (!childCount[node.parent.id]) {
-          childCount[node.parent.id] = 1; // Initialize counter for the parent
-
-          // Initialize value for y-position based on the parent's y-coordinate
-          childCount['value'] = node.parent.y + 30;  // Start the first child below the parent
-        }
-
-        if (childCount[node.parent.id] % 2 === 0) {
-          // Even-indexed children stay on the same y-level as previous odd child
-          nodeY = childCount['value'];  // Use saved value
-        } else {
-          // Odd-indexed children move to the next row (150 units lower)
-          nodeY = childCount['value'] + 150;
+      const attrs = chart.getChartState();
+      //console.log('attrs.root', attrs.root);
+      if(attrs.root.id !== node_secondry.id){
+        if(node.parent.id === node_secondry.id){
+          let nodeX = node.parent.x;
+          let nodeY;
+          if(node.compactEven === true){
+            nodeX -= 126;
+          }else if((node.compactEven === false)){
+            nodeX += 126;
+          }
+  
+          // Count children of this parent node (using the childCount dictionary)
+          if (!childCount[node.parent.id]) {
+            childCount[node.parent.id] = 1; // Initialize counter for the parent
+  
+            // Initialize value for y-position based on the parent's y-coordinate
+            childCount['value'] = node.parent.y + 30;  // Start the first child below the parent
+          }
+  
+          if (childCount[node.parent.id] % 2 === 0) {
+            // Even-indexed children stay on the same y-level as previous odd child
+            nodeY = childCount['value'];  // Use saved value
+          } else {
+            // Odd-indexed children move to the next row (150 units lower)
+            nodeY = childCount['value'] + 150;
+            
+            // Update the saved 'value' for even children
+            childCount['value'] = nodeY;
+          }
+  
+          // Increment the child count for this parent after placing the child
+          childCount[node.parent.id] += 1;
           
-          // Update the saved 'value' for even children
-          childCount['value'] = nodeY;
+  
+          // Update node's position
+          node.x = nodeX;
+          node.y = nodeY; // Keep y same as node_main.y
+          node.x0 = nodeX;
+          node.y0 = nodeY;
+  
+          tempNodeChildSave[node.id] = {
+            parentId: node.parent.id,
+            id:node.id,
+            x: nodeX,
+            y: nodeY,
+            width: '222',
+            nodeSelf: node,
+          };
+  
         }
-
-        // Increment the child count for this parent after placing the child
-        childCount[node.parent.id] += 1;
-        
-
-        // Update node's position
-        node.x = nodeX;
-        node.y = nodeY; // Keep y same as node_main.y
-        node.x0 = nodeX;
-        node.y0 = nodeY;
-
-        tempNodeChildSave[node.id] = {
-          parentId: node.parent.id,
-          id:node.id,
-          x: nodeX,
-          y: nodeY,
-          width: '222',
-          nodeSelf: node,
-        };
-
       }
+      
 
       //console.log('predefined', tempNodeChildSave);
 
@@ -1058,19 +1067,17 @@
         treeData.y = node_main.y;    // Update y
         treeData.x0 = node_main.x;   // Update x0
         treeData.y0 = node_main.y;   // Update y0
-        /*tempNodeChildSave[node_main.subject.id] = {
+        tempNodeChildSave[node_main.subject.id] = {
           parentId: node_main.subject.id,
           id:node_main.subject.id,
           x: node_main.x,
           y: node_main.y,
           width: '222',
-          nodeSelf: node,
-        };*/
+          nodeSelf: node_main.subject,
+        };
       }
-    
-
       
-
+      
       //console.log('treeData', treeData);
       // Reassigns the x and y position for the based on the compact layout
       if (attrs.compact) {
@@ -1081,6 +1088,12 @@
          // Initialize or increment the count for the current node id
         if (!checkExpandCollapse[node_main.id]) {
           checkExpandCollapse[node_main.id] = 1; // Initialize with 1 if not already set
+          if (tempNodeChildSave[treeData.id]) {
+            treeData.x = tempNodeChildSave[treeData.id].x;    // Update x
+            treeData.y = tempNodeChildSave[treeData.id].y;    // Update y
+            treeData.x0 = tempNodeChildSave[treeData.id].x;   // Update x0
+            treeData.y0 = tempNodeChildSave[treeData.id].y;   // Update y0
+          }
           treeData['children'].forEach((child) => {
             //setTimeout(() => {
               //console.log('before child', child, child['x'], child.y, child.id);
@@ -1597,10 +1610,13 @@
         return d.x;
       };
       layout.top.linkY = function(d) {
-        //console.log('linkY', d, d.y, node_main.y, node_secondry.parent.y);
-        if(d.y <= node_secondry.parent.y && d.id === node_secondry.id){
-          //console.log('met');
-          return node_main.y + node_secondry.height;
+        console.log('linkY', d, d.y, node_main.y, node_secondry.parent);
+        if(node_secondry.parent !== null){
+          console.log('yes');
+          if(d.y <= node_secondry.parent.y && d.id === node_secondry.id){
+            //console.log('met');
+            return node_main.y + node_secondry.height;
+          }
         }
         return d.y;
       };
