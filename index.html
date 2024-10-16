@@ -882,10 +882,12 @@
         let nodeY = node_main.y;
         let childOverlapInfo;
         //node.compactEven = null;
-        /*node.firstCompact = null;
-        node.compactEven = null;
-        node.flexCompactDim = null;
-        node.firstCompactNode = null;*/``
+        if(!(node.firstCompact)){
+          node.firstCompact = null;
+          node.compactEven = null;
+          node.flexCompactDim = null;
+          node.firstCompactNode = null;
+        }
         /*
         while (overlapInfo.isOverlapping) {
           // Adjust node's position based on overlap direction
@@ -986,10 +988,17 @@
         node.y = predefinedValues.y; // Update y
         node.x0 = predefinedValues.x; // Update x0
         node.y0 = predefinedValues.y; // Update y0
+        if(!(node.firstCompact)){
+          node.firstCompact = null;
+          node.compactEven = null;
+          node.flexCompactDim = null;
+          node.firstCompactNode = null;
+        }
         //console.log(`After Update - Node ID: ${node.data.id}, New X: ${node.x}, New Y: ${node.y}`);
       }
       const attrs = chart.getChartState();
       //console.log('attrs.root', attrs.root);
+      //setting child position of the parent
       if(attrs.root.id !== node_secondry.id){
         if(node.parent.id === node_secondry.id){
           let nodeX = node.parent.x;
@@ -1612,7 +1621,7 @@
         return d.x;
       };
       layout.top.linkY = function(d) {
-        console.log('linkY', d, d.y, node_main.y, node_secondry.parent);
+        //console.log('linkY', d, d.y, node_main.y, node_secondry.parent);
         if(node_secondry.parent !== null){
           //console.log('yes');
           if(d.y <= node_secondry.parent.y && d.id === node_secondry.id){
